@@ -1,0 +1,13 @@
+username: cyan
+name: new
+description: CyanPrint Template to create CyanPrint Templates, Processors or Plugins
+project: https://github.com/AtomiCloud/ketone.new-cyanprint
+source: https://github.com/AtomiCloud/ketone.new-cyanprint
+email: ernest@atomi.cloud
+tags:
+  - default
+  - cyanprint
+readme: README.MD
+processors:
+  - cyan/default
+plugins: []

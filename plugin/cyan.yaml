@@ -1,0 +1,9 @@
+username: {{ username }}
+name: {{ name }}
+description: {{ desc }}
+project: {{ project }}
+source: {{ source }}
+email: {{ email }}
+tags: {{ tags }}
+readme: README.MD
+
