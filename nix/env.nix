@@ -2,10 +2,8 @@
 with packages;
 {
   system = [
-    coreutils
+    atomiutils
     sd
-    bash
-    findutils
   ];
 
   dev = [
@@ -41,16 +39,6 @@ with packages;
     shellcheck
     sg
     golangci-lint
-  ];
-
-  ci = [
-
-  ];
-
-  releaser = [
-    nodejs
-    sg
-    npm
   ];
 
 }
