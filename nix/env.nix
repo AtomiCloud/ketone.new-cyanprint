@@ -9,6 +9,7 @@ with packages;
   dev = [
     pls
     git
+    sg
   ];
 
   infra = [
