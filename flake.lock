@@ -11,16 +11,16 @@
         "treefmt-nix": "treefmt-nix_3"
       },
       "locked": {
-        "lastModified": 1738139441,
-        "narHash": "sha256-T/r9GFogfU74MtsZGWSPFSIE8aS/aOtdxlHdnG3hnuw=",
+        "lastModified": 1738504989,
+        "narHash": "sha256-Hx89DX5ItdwMqPmesdVet66MlAkuLH4actTjLQPbgEY=",
         "owner": "AtomiCloud",
         "repo": "nix-registry",
-        "rev": "ad6f5d27801cfdf749ba97acdc70bed4e9ee9448",
+        "rev": "e8ddf57eccaeaafa0337ed074d5eb961e35f000a",
         "type": "github"
       },
       "original": {
         "owner": "AtomiCloud",
-        "ref": "v1",
+        "ref": "v2",
         "repo": "nix-registry",
         "type": "github"
       }
