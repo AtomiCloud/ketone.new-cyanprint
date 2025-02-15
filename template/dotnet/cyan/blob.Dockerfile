@@ -1,4 +1,4 @@
-FROM alpine:3.18.4 as base
+FROM alpine:3.21 as base
 # hadolint ignore=DL3018,DL3019
 RUN apk add tar
 
