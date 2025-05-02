@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AtomiCloud.CyanPrint" Version="1.0.0-c5c26e-feat-status" />
+      <PackageReference Include="AtomiCloud.CyanPrint" Version="2.0.0" />
     </ItemGroup>
 
 </Project>

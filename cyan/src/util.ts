@@ -1,6 +1,8 @@
 import validator from 'validator';
-import * as os from 'os';
-import isInt = validator.isInt;
+import os from 'node:os';
+const isInt = validator.isInt;
+
+const prefix = 'cyan/new/';
 
 const indent = (input: string, indent: number) => {
   const lf = os.EOL;
@@ -47,4 +49,4 @@ const usernameValidator = (type: string) => (input: string) => {
   return null;
 };
 
-export { usernameValidator, referenceValid, indent };
+export { usernameValidator, referenceValid, indent, prefix };

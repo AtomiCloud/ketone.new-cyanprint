@@ -5,7 +5,7 @@ import {
   IInquirer,
   QuestionType,
 } from "@atomicloud/cyan-sdk";
-import { indent, referenceValid } from "./util.ts";
+import { indent, prefix, referenceValid } from "./util.ts";
 import * as os from "os";
 
 export async function PromptTemplate(
@@ -15,32 +15,32 @@ export async function PromptTemplate(
 ): Promise<Cyan> {
   let processors: string[] = [];
   let plugins: string[] = [];
-  let procCont =
-    (await inquirer.select("Add a processor?", ["yes", "no"])) === "yes";
-  while (procCont) {
+  
+  let processorCount = 0;
+  let processorQ = async () => await inquirer.select("Add a processor?", ["yes", "no"],`${prefix}more-processors/${processorCount}`) === "yes";
+
+  while (await processorQ()) {
     const proc = await inquirer.text({
       message: "Processor to add",
+      id: `${prefix}processor/${processorCount++}`,
       type: QuestionType.Text,
       desc: "Processors you are planning to use. You can find them at https://cyanprint.dev/registry",
       validate: referenceValid,
     });
     processors.push(proc);
-    procCont =
-      (await inquirer.select("Add a processor?", ["yes", "no"])) === "yes";
   }
 
-  let plugCont =
-    (await inquirer.select("Add a plugin?", ["yes", "no"])) === "yes";
-  while (plugCont) {
+  let pluginCount = 0;
+  let pluginQ = async () => await inquirer.select("Add a plugin?", ["yes", "no"],`${prefix}more-plugins/${pluginCount}`) === "yes";
+  while (await pluginQ()) {
     const plug = await inquirer.text({
       message: "Plugin to add",
+      id: `${prefix}plugin/${pluginCount++}`,
       type: QuestionType.Text,
       desc: "Plugins you are planning to use. You can find them at https://cyanprint.dev/registry",
       validate: referenceValid,
     });
     plugins.push(plug);
-    plugCont =
-      (await inquirer.select("Add a plugin?", ["yes", "no"])) === "yes";
   }
 
   const [processorsConfig, pluginsConfig, glob] = (() => {
