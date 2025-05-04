@@ -9,5 +9,5 @@ tags:
   - cyanprint
 readme: README.MD
 processors:
-  - cyan/default
+  - cyan/default:7
 plugins: []

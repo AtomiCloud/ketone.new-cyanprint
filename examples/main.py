@@ -27,7 +27,7 @@ async def template(i: IInquirer, d: IDeterminism) -> Cyan:
     return Cyan(
         processors=[
             CyanProcessor(
-                name="cyan/default",
+                name="cyan/default:7",
                 files=[
                     CyanGlob(
                         root=".",

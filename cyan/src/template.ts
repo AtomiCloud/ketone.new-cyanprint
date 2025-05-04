@@ -60,7 +60,7 @@ export async function PromptTemplate(
   return {
     processors: [
       {
-        name: "cyan/default",
+        name: "cyan/default:7",
         files: [
           ...glob,
           {
