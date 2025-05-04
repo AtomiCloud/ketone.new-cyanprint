@@ -23,7 +23,7 @@ StartTemplateWithLambda(async (i, d) => {
   return {
     processors: [
       {
-        name: 'cyan/default:7',
+        name: 'cyan/default',
         files: [
           {
             glob: '**/*',
