@@ -1,48 +1,53 @@
-{ pkgs, atomi, pkgs-2411 }:
+{ pkgs, pkgs-2505, pkgs-unstable, atomi }:
 let
+
   all = {
     atomipkgs = (
       with atomi;
       {
         inherit
+          infrautils
+          infralint
           atomiutils
-          pls
-          sg;
+          sg
+          pls;
       }
     );
-    nix-2411 = (
-      with pkgs-2411;
+    nix-unstable = (
+      with pkgs-unstable;
+      { }
+    );
+    nix-2505 = (
+      with pkgs-2505;
       {
+
         inherit
-          infisical
-          hadolint
-          bun
-          sd
+
           git
-          # lint
+
+          infisical
+          bun
+          biome
+
           treefmt
-          gitlint
           shellcheck
 
-          # dotnet
-          # go
+          gitlint
+
           golangci-lint
           go
-
-
-          #infra
-          docker
           ;
 
         python = python312;
-        poetry = (poetry.override { python3 = python311; });
+        poetry = (poetry.override { python3 = python312; });
 
-        nodejs = nodejs_20;
-        dotnet = dotnet-sdk_9;
+        nodejs = nodejs_22;
+        dotnet = dotnet-sdk_8;
       }
     );
   };
 in
 with all;
-atomipkgs //
-nix-2411
+nix-2505 //
+nix-unstable //
+atomipkgs

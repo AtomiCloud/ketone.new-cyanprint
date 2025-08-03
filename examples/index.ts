@@ -1,4 +1,4 @@
-import { CyanGlob, GlobType, QuestionType, StartTemplateWithLambda } from '@atomicloud/cyan-sdk';
+import { type CyanGlob, GlobType, QuestionType, StartTemplateWithLambda } from '@atomicloud/cyan-sdk';
 
 StartTemplateWithLambda(async (i, d) => {
   const name = await i.text('What is your name?');
@@ -8,7 +8,7 @@ StartTemplateWithLambda(async (i, d) => {
     type: QuestionType.Text,
     validate: v => {
       try {
-        const n = parseInt(v);
+        const n = Number.parseInt(v);
         if (n < 19) {
           return 'Age needs to be large than 19';
         }

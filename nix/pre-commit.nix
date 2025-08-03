@@ -1,4 +1,4 @@
-{ formatter, pre-commit-lib, packages }:
+{ packages, formatter, pre-commit-lib }:
 pre-commit-lib.run {
   src = ./.;
 
@@ -7,13 +7,20 @@ pre-commit-lib.run {
     # formatter
     treefmt = {
       enable = true;
-      excludes = [ ".*plugin.*" ".*processor.*" ".*template.*" ];
-    };
-    # linters From https://github.com/cachix/pre-commit-hooks.nix
-    shellcheck = {
-      enable = false;
+      package = formatter;
+      excludes = [
+        ".*node_modules.*"
+        ".*(Changelog|README|CommitConventions).+(MD|md)"
+        ".*plugin.*"
+        ".*processor.*"
+        ".*template.*"
+      ];
     };
 
+    # linters From https://github.com/cachix/pre-commit-hooks.nix
+    shellcheck.enable = false;
+
+    # custom precommits 
     a-infisical = {
       enable = true;
       name = "Secrets Scanning";
@@ -50,19 +57,6 @@ pre-commit-lib.run {
       pass_filenames = true;
     };
 
-    a-hadolint = {
-      enable = true;
-      name = "Docker Linter";
-      entry = "${packages.hadolint}/bin/hadolint";
-      files = ".*Dockerfile$";
-      language = "system";
-      pass_filenames = true;
-    };
-  };
 
-  settings = {
-    treefmt = {
-      package = formatter;
-    };
   };
 }

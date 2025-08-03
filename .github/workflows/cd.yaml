@@ -1,0 +1,41 @@
+name: CD
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+jobs:
+  #
+  docker:
+    name: Build Docker Image - ${{ matrix.image_name }}
+    strategy:
+      matrix:
+        include:
+          - context: ./cyan
+            dockerfile: ./cyan/Dockerfile
+            image_name: template
+          - context: ./cyan
+            dockerfile: ./cyan/blob.Dockerfile
+            image_name: template-blob
+    uses: ./.github/workflows/⚡reusable-docker.yaml
+    secrets: inherit
+    with:
+      atomi_platform: ketone
+      atomi_service: new-cyanprint
+
+      context: ${{ matrix.context }}
+      dockerfile: ${{ matrix.dockerfile }}
+      image_name: ${{ matrix.image_name }}
+
+      version: ${{ github.ref_name }}
+
+  cyanprint:
+    name: Push to Cyanprint
+    needs: docker
+    uses: ./.github/workflows/⚡reusable-cyanprint.yaml
+    secrets: inherit
+    with:
+      atomi_platform: ketone
+      atomi_service: new-cyanprint
+
+      version: ${{ github.ref_name }}

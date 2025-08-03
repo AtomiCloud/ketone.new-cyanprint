@@ -1,8 +1,8 @@
 import {
-  Cyan,
-  CyanGlob,
+  type Cyan,
+  type CyanGlob,
   GlobType,
-  IInquirer,
+  type IInquirer,
   QuestionType,
 } from "@atomicloud/cyan-sdk";
 import { indent, prefix, referenceValid } from "./util.ts";
@@ -13,11 +13,11 @@ export async function PromptTemplate(
   langType: string,
   vars: any,
 ): Promise<Cyan> {
-  let processors: string[] = [];
-  let plugins: string[] = [];
+  const processors: string[] = [];
+  const plugins: string[] = [];
   
   let processorCount = 0;
-  let processorQ = async () => await inquirer.select("Add a processor?", ["yes", "no"],`${prefix}more-processors/${processorCount}`) === "yes";
+  const processorQ = async () => await inquirer.select("Add a processor?", ["yes", "no"],`${prefix}more-processors/${processorCount}`) === "yes";
 
   while (await processorQ()) {
     const proc = await inquirer.text({
@@ -31,7 +31,7 @@ export async function PromptTemplate(
   }
 
   let pluginCount = 0;
-  let pluginQ = async () => await inquirer.select("Add a plugin?", ["yes", "no"],`${prefix}more-plugins/${pluginCount}`) === "yes";
+  const pluginQ = async () => await inquirer.select("Add a plugin?", ["yes", "no"],`${prefix}more-plugins/${pluginCount}`) === "yes";
   while (await pluginQ()) {
     const plug = await inquirer.text({
       message: "Plugin to add",
@@ -87,6 +87,8 @@ export async function PromptTemplate(
           parser: {
             varSyntax: [
               ["{{", "}}"],
+              ["// {{", "}}"],
+              ["# {{", "}}"],
             ]
           }
         },

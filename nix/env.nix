@@ -3,17 +3,12 @@ with packages;
 {
   system = [
     atomiutils
-    sd
   ];
 
   dev = [
     pls
     git
     sg
-  ];
-
-  infra = [
-    docker
   ];
 
   main = [
@@ -27,19 +22,17 @@ with packages;
     dotnet
 
     nodejs
-    bun
-
     infisical
+    bun
   ];
 
   lint = [
     # core
     treefmt
-    hadolint
-    gitlint
     shellcheck
-    sg
     golangci-lint
+    gitlint
+    infralint
+    sg
   ];
-
 }

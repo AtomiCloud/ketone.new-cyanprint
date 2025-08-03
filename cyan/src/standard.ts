@@ -1,5 +1,5 @@
 // Ask the standard shared questions
-import { IInquirer, QuestionType } from '@atomicloud/cyan-sdk';
+import { type IInquirer, QuestionType } from '@atomicloud/cyan-sdk';
 import { prefix, usernameValidator } from './util.ts';
 import isEmail from 'validator/lib/isEmail';
 import isURL from 'validator/lib/isURL';
@@ -50,7 +50,7 @@ export async function standardCyanModel(
   const tags: string[] = [];
 
   let tagCount = 0;
-  let tagQ = async () =>
+  const tagQ = async () =>
     (await inquirer.select('Add a tag?', ['yes', 'no'], `${prefix}more-tags/${tagCount}`)) === 'yes';
 
   while (await tagQ()) {

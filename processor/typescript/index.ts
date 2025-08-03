@@ -1,5 +1,5 @@
 import {
-  ProcessorOutput,
+  type ProcessorOutput,
   StartProcessorWithLambda,
 } from "@atomicloud/cyan-sdk";
 
