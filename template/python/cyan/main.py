@@ -14,6 +14,4 @@ async def template(i: IInquirer, d: IDeterminism) -> Cyan:
         ],
     )
 
-print
-
 start_template_with_fn(template)
