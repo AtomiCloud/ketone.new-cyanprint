@@ -1,7 +1,7 @@
-FROM python:3.11
+FROM python:3.12.11
 WORKDIR /app
 LABEL cyanprint.dev=true
 COPY requirements.txt .
 RUN pip install --no-cache-dir  -r requirements.txt
 COPY . .
-CMD [ "python", "main.py" ]
+CMD [ "python", "-u", "main.py" ]

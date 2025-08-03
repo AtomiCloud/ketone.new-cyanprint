@@ -22,22 +22,17 @@ specialScopes:
     release: false
 
 plugins:
-  # Generate Changelog
   - module: '@semantic-release/changelog'
     version: 6.0.3
     config:
       changelogFile: Changelog.md
-
-  # Commit Additional Changes & Artifacts
   - module: '@semantic-release/git'
     version: 10.0.1
     config:
-      message: "release: ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      message: "release: ${nextRelease.version}\n\n${nextRelease.notes}"
       assets:
         - Changelog.md
-        - docs/developer/CommitConventions.md
-
-  # Github Release
+        - CommitConventions.md
   - module: '@semantic-release/github'
     version: 10.3.5
 
@@ -79,6 +74,9 @@ types:
       default:
         desc: Release a new features
         release: minor
+      breaking:
+        desc: Release a breaking change
+        release: major
   - type: fix
     section: 🐛 Bug Fixes 🐛
     desc: A bug fix
@@ -138,12 +136,6 @@ types:
       default:
         desc: amendments
         release: false
-  - type: chore
-    desc: Chores like test, attempts, typos, etc
-    scopes:
-      default:
-        desc: Chores
-        release: false
   - type: dep
     desc: Dependency updates from upstream
     section: 🔼 Dependency Upstreams 🔼
@@ -160,3 +152,9 @@ types:
       major:
         desc: Dependency updates are major
         release: major
+  - type: chore
+    desc: Chores like test, attempts, typos, etc
+    scopes:
+      default:
+        desc: Chores
+        release: false

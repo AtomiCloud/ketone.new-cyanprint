@@ -1,4 +1,4 @@
-import { Cyan, StartTemplateWithLambda, IInquirer, IDeterminism } from '@atomicloud/cyan-sdk';
+import { type Cyan, StartTemplateWithLambda, type IInquirer, type IDeterminism } from '@atomicloud/cyan-sdk';
 import { standardCyanModel } from './src/standard.ts';
 import { PromptTemplate } from './src/template.ts';
 import { PromptPlugin } from './src/plugin.ts';

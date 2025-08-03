@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  precommit:
+    name: Pre-Commit
+    uses: ./.github/workflows/⚡reusable-precommit.yaml
+    secrets: inherit
+    with:
+      atomi_platform: ketone
+      atomi_service: new-cyanprint
+  #
+  docker:
+    name: Build Docker - ${{ matrix.image_name }}
+    strategy:
+      matrix:
+        include:
+          - context: ./cyan
+            dockerfile: ./cyan/Dockerfile
+            image_name: template
+          - context: ./cyan
+            dockerfile: ./cyan/blob.Dockerfile
+            image_name: template-blob
+    uses: ./.github/workflows/⚡reusable-docker.yaml
+    secrets: inherit
+    with:
+      atomi_platform: ketone
+      atomi_service: new-cyanprint
+
+      context: ${{ matrix.context }}
+      dockerfile: ${{ matrix.dockerfile }}
+      image_name: ${{ matrix.image_name }}
+  #
+  #

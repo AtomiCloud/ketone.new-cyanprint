@@ -1,17 +1,15 @@
 ﻿using sulfone_helium;
-using sulfone_helium_domain.Core;
+using sulfone_helium.Domain.Core;
 
 CyanEngine.StartTemplate(args, async (inquirer, determinism) =>
 {
     return new Cyan
     {
-        Processors = new[]
-        {
-{{processorsConfig}}
-        },
-        Plugins = new[]
-        {
-{{pluginsConfig}}
-        },
+        Processors = [
+// {{processorsConfig}}
+        ],
+        Plugins = [
+// {{pluginsConfig}}
+        ],
     };
 });

@@ -1,5 +1,5 @@
 ﻿using sulfone_helium;
-using sulfone_helium_domain.Plugin;
+using sulfone_helium.Domain.Plugin;
 
 CyanEngine.StartPlugin(args, async (input) =>
 {

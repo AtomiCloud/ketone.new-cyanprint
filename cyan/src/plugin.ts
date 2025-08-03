@@ -1,4 +1,4 @@
-import { Cyan, CyanGlob, GlobType, IInquirer } from "@atomicloud/cyan-sdk";
+import { type Cyan, type CyanGlob, GlobType, type IInquirer } from "@atomicloud/cyan-sdk";
 
 export async function PromptPlugin(
   inquirer: IInquirer,

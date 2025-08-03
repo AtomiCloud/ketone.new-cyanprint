@@ -7,12 +7,13 @@ from cyanprintsdk.domain.core.cyan import Cyan, CyanProcessor
 async def template(i: IInquirer, d: IDeterminism) -> Cyan:
     return Cyan(
         processors=[
-{{processorsConfig}}
+# {{processorsConfig}}
         ],
         plugins=[
-{{pluginsConfig}}
+# {{pluginsConfig}}
         ],
     )
 
+print
 
 start_template_with_fn(template)

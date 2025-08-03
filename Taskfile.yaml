@@ -1,10 +1,9 @@
 version: '3'
 
-vars:
-  PLATFORM: sulfone
-  SERVICE: helium
-
 tasks:
+  test:
+    cmds:
+      - ./scripts/test.sh
   build:
     dotenv:
       - './.env'

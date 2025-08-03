@@ -3,10 +3,10 @@ import {StartTemplateWithLambda} from "@atomicloud/cyan-sdk";
 StartTemplateWithLambda(async (i, d) => {
   return {
     processors: [
-{{processorsConfig}}
+// {{processorsConfig}}
     ],
     plugins: [
-{{pluginsConfig}}
+// {{pluginsConfig}}
     ],
   }
 });

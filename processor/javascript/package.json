@@ -9,6 +9,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@atomicloud/cyan-sdk": "^1.3.5"
+    "@atomicloud/cyan-sdk": "2.0.0"
   }
 }

@@ -1,4 +1,4 @@
-FROM oven/bun:1.1.31
+FROM oven/bun:1.2.13
 WORKDIR /app
 LABEL cyanprint.dev=true
 COPY package.json .
