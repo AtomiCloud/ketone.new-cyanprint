@@ -35,4 +35,8 @@ with packages;
     infralint
     sg
   ];
+
+  releaser = [
+    sg
+  ];
 }
