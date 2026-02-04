@@ -1,3 +1,12 @@
+## [1.1.0](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.0.0...v1.1.0) (2026-02-04)
+
+
+### ✨ Features ✨
+
+* skill upgrade ([75c74cf](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/75c74cf277c63a031c28c0fd56e0ef7f1a6bdbe0))
+* upgraded all runtimes ([c4972d9](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/c4972d93e4f2d61c5d3c0de73040de28a9f774da))
+* upgraded flakes ([420ed96](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/420ed9645da7d8f174b6315a48a19c06868a2c62))
+
 ## 1.0.0 (2025-08-03)
 
 
