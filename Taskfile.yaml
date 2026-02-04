@@ -9,3 +9,7 @@ tasks:
       - './.env'
     cmds:
       - GITHUB_SHA="$(cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 6 | head -n 1)" ./scripts/publish.sh
+  setup:
+    desc: 'Setup the repository'
+    cmds:
+      - echo "ok";
