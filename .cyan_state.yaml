@@ -1,3 +1,179 @@
+atomi/workspace:
+  active: true
+  history:
+    - version: 18
+      time: 2025-08-03T09:56:58.204107Z
+      answers:
+        atomi/workspace/runtime:
+          type: String
+          value: None
+        atomi/workspace/platform:
+          type: String
+          value: ketone
+        atomi/workspace/enable-docker:
+          type: Bool
+          value: false
+        atomi/workspace/service:
+          type: String
+          value: new-cyanprint
+        atomi/workspace/enable-helm:
+          type: Bool
+          value: false
+      deterministic_states: {}
+    - version: 19
+      time: 2025-08-03T10:14:05.268700Z
+      answers:
+        atomi/workspace/enable-secret:
+          type: Bool
+          value: false
+        atomi/workspace/runtime:
+          type: String
+          value: None
+        atomi/workspace/service:
+          type: String
+          value: new-cyanprint
+        atomi/workspace/enable-helm:
+          type: Bool
+          value: false
+        atomi/workspace/platform:
+          type: String
+          value: ketone
+        atomi/workspace/enable-docker:
+          type: Bool
+          value: false
+      deterministic_states: {}
+    - version: 19
+      time: 2025-08-03T10:19:43.805506Z
+      answers:
+        atomi/workspace/enable-helm:
+          type: Bool
+          value: false
+        atomi/workspace/enable-docker:
+          type: Bool
+          value: true
+        atomi/workspace/runtime:
+          type: String
+          value: None
+        atomi/workspace/service:
+          type: String
+          value: new-cyanprint
+        atomi/workspace/enable-secret:
+          type: Bool
+          value: true
+        atomi/workspace/platform:
+          type: String
+          value: ketone
+      deterministic_states: {}
+    - version: 19
+      time: 2025-08-03T10:20:03.427199Z
+      answers:
+        atomi/workspace/platform:
+          type: String
+          value: ketone
+        atomi/workspace/runtime:
+          type: String
+          value: None
+        atomi/workspace/service:
+          type: String
+          value: new-cyanprint
+        atomi/workspace/enable-helm:
+          type: Bool
+          value: false
+        atomi/workspace/enable-secret:
+          type: Bool
+          value: false
+        atomi/workspace/enable-docker:
+          type: Bool
+          value: true
+      deterministic_states: {}
+    - version: 20
+      time: 2025-08-03T12:27:08.284600Z
+      answers:
+        atomi/workspace/runtime:
+          type: String
+          value: None
+        atomi/workspace/enable-docker:
+          type: Bool
+          value: true
+        atomi/workspace/enable-helm:
+          type: Bool
+          value: false
+        atomi/workspace/platform:
+          type: String
+          value: ketone
+        atomi/workspace/enable-secret:
+          type: Bool
+          value: false
+        atomi/workspace/service:
+          type: String
+          value: new-cyanprint
+      deterministic_states: {}
+    - version: 21
+      time: 2026-02-04T01:37:30.758839Z
+      answers:
+        atomi/workspace/service:
+          type: String
+          value: new-cyanprint
+        atomi/workspace/enable-secret:
+          type: Bool
+          value: false
+        atomi/workspace/platform:
+          type: String
+          value: ketone
+        atomi/workspace/enable-docker:
+          type: Bool
+          value: true
+        atomi/workspace/runtime:
+          type: String
+          value: None
+        atomi/workspace/enable-helm:
+          type: Bool
+          value: false
+      deterministic_states: {}
+    - version: 25
+      time: 2026-02-09T21:52:49.285548Z
+      answers:
+        atomi/workspace/service:
+          type: String
+          value: new-cyanprint
+        atomi/workspace/enable-docker:
+          type: Bool
+          value: true
+        atomi/workspace/runtime:
+          type: String
+          value: None
+        atomi/workspace/platform:
+          type: String
+          value: ketone
+        atomi/workspace/enable-helm:
+          type: Bool
+          value: false
+        atomi/workspace/enable-secret:
+          type: Bool
+          value: false
+      deterministic_states: {}
+    - version: 27
+      time: 2026-02-10T00:19:20.841794Z
+      answers:
+        atomi/workspace/runtime:
+          type: String
+          value: None
+        atomi/workspace/enable-helm:
+          type: Bool
+          value: false
+        atomi/workspace/enable-secret:
+          type: Bool
+          value: false
+        atomi/workspace/platform:
+          type: String
+          value: ketone
+        atomi/workspace/service:
+          type: String
+          value: new-cyanprint
+        atomi/workspace/enable-docker:
+          type: Bool
+          value: true
+      deterministic_states: {}
 atomi/nix-init:
   active: true
   history:
@@ -29,135 +205,10 @@ atomi/nix-init:
           type: String
           value: CyanPrint Bun
       deterministic_states: {}
-atomi/workspace:
-  active: true
-  history:
-    - version: 18
-      time: 2025-08-03T09:56:58.204107Z
+    - version: 23
+      time: 2026-02-09T21:52:03.824854Z
       answers:
-        atomi/workspace/enable-helm:
-          type: Bool
-          value: false
-        atomi/workspace/runtime:
+        init-type:
           type: String
-          value: None
-        atomi/workspace/service:
-          type: String
-          value: new-cyanprint
-        atomi/workspace/enable-docker:
-          type: Bool
-          value: false
-        atomi/workspace/platform:
-          type: String
-          value: ketone
-      deterministic_states: {}
-    - version: 19
-      time: 2025-08-03T10:14:05.268700Z
-      answers:
-        atomi/workspace/platform:
-          type: String
-          value: ketone
-        atomi/workspace/enable-helm:
-          type: Bool
-          value: false
-        atomi/workspace/runtime:
-          type: String
-          value: None
-        atomi/workspace/service:
-          type: String
-          value: new-cyanprint
-        atomi/workspace/enable-docker:
-          type: Bool
-          value: false
-        atomi/workspace/enable-secret:
-          type: Bool
-          value: false
-      deterministic_states: {}
-    - version: 19
-      time: 2025-08-03T10:19:43.805506Z
-      answers:
-        atomi/workspace/enable-helm:
-          type: Bool
-          value: false
-        atomi/workspace/enable-docker:
-          type: Bool
-          value: true
-        atomi/workspace/enable-secret:
-          type: Bool
-          value: true
-        atomi/workspace/runtime:
-          type: String
-          value: None
-        atomi/workspace/platform:
-          type: String
-          value: ketone
-        atomi/workspace/service:
-          type: String
-          value: new-cyanprint
-      deterministic_states: {}
-    - version: 19
-      time: 2025-08-03T10:20:03.427199Z
-      answers:
-        atomi/workspace/enable-secret:
-          type: Bool
-          value: false
-        atomi/workspace/platform:
-          type: String
-          value: ketone
-        atomi/workspace/enable-helm:
-          type: Bool
-          value: false
-        atomi/workspace/runtime:
-          type: String
-          value: None
-        atomi/workspace/enable-docker:
-          type: Bool
-          value: true
-        atomi/workspace/service:
-          type: String
-          value: new-cyanprint
-      deterministic_states: {}
-    - version: 20
-      time: 2025-08-03T12:27:08.284600Z
-      answers:
-        atomi/workspace/runtime:
-          type: String
-          value: None
-        atomi/workspace/enable-secret:
-          type: Bool
-          value: false
-        atomi/workspace/enable-helm:
-          type: Bool
-          value: false
-        atomi/workspace/enable-docker:
-          type: Bool
-          value: true
-        atomi/workspace/platform:
-          type: String
-          value: ketone
-        atomi/workspace/service:
-          type: String
-          value: new-cyanprint
-      deterministic_states: {}
-    - version: 21
-      time: 2026-02-04T01:37:30.758839Z
-      answers:
-        atomi/workspace/enable-docker:
-          type: Bool
-          value: true
-        atomi/workspace/enable-helm:
-          type: Bool
-          value: false
-        atomi/workspace/service:
-          type: String
-          value: new-cyanprint
-        atomi/workspace/runtime:
-          type: String
-          value: None
-        atomi/workspace/platform:
-          type: String
-          value: ketone
-        atomi/workspace/enable-secret:
-          type: Bool
-          value: false
+          value: CyanPrint Bun
       deterministic_states: {}

@@ -9,6 +9,7 @@ with packages;
     pls
     git
     sg
+    typescript-language-server
   ];
 
   main = [
