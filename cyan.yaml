@@ -8,6 +8,7 @@ tags:
   - default
   - cyanprint
 readme: README.MD
+templates: []
 processors:
   - cyan/default
 plugins: []

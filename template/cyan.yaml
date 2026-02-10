@@ -6,5 +6,6 @@ source: {{ source }}
 email: {{ email }}
 tags: {{ tags }}
 readme: cyan/README.MD
+templates: []
 processors: {{ processors }}
 plugins: {{ plugins }}
