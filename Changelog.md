@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.2.1...v1.2.2) (2026-02-10)
+
+
+### 🐛 Bug Fixes 🐛
+
+* incorrect image name ([9a08eb2](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/9a08eb24dec59fd884915f1afe6b50c33271dc67))
+
 ## [1.2.1](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.2.0...v1.2.1) (2026-02-10)
 
 
