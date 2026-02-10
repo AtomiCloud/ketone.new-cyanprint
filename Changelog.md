@@ -1,3 +1,10 @@
+## [1.2.0](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.1.0...v1.2.0) (2026-02-10)
+
+
+### ✨ Features ✨
+
+* cyan update ([fbd67bc](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/fbd67bcdd4382ebde6c09dd92c7a3fa032b86d37))
+
 ## [1.1.0](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.0.0...v1.1.0) (2026-02-04)
 
 
