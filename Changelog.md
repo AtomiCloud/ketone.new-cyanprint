@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.2.0...v1.2.1) (2026-02-10)
+
+
+### 🐛 Bug Fixes 🐛
+
+* compatibility with v2, which allows for multiple templates ([35ea68a](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/35ea68a64c69b6a28dcb73e784dff3242524470b))
+
 ## [1.2.0](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.1.0...v1.2.0) (2026-02-10)
 
 
