@@ -13,7 +13,7 @@ jobs:
         include:
           - context: ./cyan
             dockerfile: ./cyan/Dockerfile
-            image_name: template
+            image_name: template-template
           - context: ./cyan
             dockerfile: ./cyan/blob.Dockerfile
             image_name: template-blob
