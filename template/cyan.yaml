@@ -1,11 +1,12 @@
-username: {{ username }}
-name: {{ name }}
-description: {{ desc }}
-project: {{ project }}
-source: {{ source }}
-email: {{ email }}
-tags: {{ tags }}
+username: { { username } }
+name: { { name } }
+description: { { desc } }
+project: { { project } }
+source: { { source } }
+email: { { email } }
+tags: { { tags } }
 readme: cyan/README.MD
 templates: []
-processors: {{ processors }}
-plugins: {{ plugins }}
+processors: []
+plugins: []
+resolvers: []

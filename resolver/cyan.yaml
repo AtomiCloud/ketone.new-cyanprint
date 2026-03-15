@@ -1,0 +1,18 @@
+username: { { username } }
+name: { { name } }
+description: { { desc } }
+project: { { project } }
+source: { { source } }
+email: { { email } }
+tags: { { tags } }
+readme: README.MD
+build:
+  registry: ${DOMAIN}/${GITHUB_REPO_REF}
+  platforms:
+    - linux/amd64
+    - linux/arm64
+  images:
+    resolver:
+      image: resolver
+      dockerfile: Dockerfile
+      context: .

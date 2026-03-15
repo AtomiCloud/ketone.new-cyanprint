@@ -1,5 +1,5 @@
-import { StartPluginWithLambda } from "@atomicloud/cyan-sdk";
+import { StartPluginWithLambda } from '@atomicloud/cyan-sdk';
 
-StartPluginWithLambda(async (input) => {
+StartPluginWithLambda(async input => {
   return { directory: input.directory };
 });

@@ -3,12 +3,13 @@ import { standardCyanModel } from './src/standard.ts';
 import { PromptTemplate } from './src/template.ts';
 import { PromptPlugin } from './src/plugin.ts';
 import { PromptProcessor } from './src/processor.ts';
+import { PromptResolver } from './src/resolver.ts';
 import { prefix } from './src/util.ts';
 
 StartTemplateWithLambda(async (inquirer: IInquirer, determinism: IDeterminism): Promise<Cyan> => {
   const cyanType = await inquirer.select(
     'What do you want to create?',
-    ['Template', 'Plugin', 'Processor'],
+    ['Template', 'Plugin', 'Processor', 'Resolver'],
     `${prefix}create`,
   );
 
@@ -26,6 +27,8 @@ StartTemplateWithLambda(async (inquirer: IInquirer, determinism: IDeterminism): 
     return PromptPlugin(inquirer, langType, vars);
   } else if (cyanType === 'Processor') {
     return PromptProcessor(inquirer, langType, vars);
+  } else if (cyanType === 'Resolver') {
+    return PromptResolver(inquirer, langType, vars);
   } else {
     throw new Error('Invalid cyan type');
   }

@@ -14,6 +14,7 @@ pre-commit-lib.run {
         ".*plugin.*"
         ".*processor.*"
         ".*template.*"
+        ".*resolver.*"
       ];
     };
 

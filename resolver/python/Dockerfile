@@ -1,0 +1,8 @@
+FROM python:3.12.12
+WORKDIR /app
+LABEL cyanprint.dev=true
+EXPOSE 5553
+COPY requirements.txt .
+RUN pip install --no-cache-dir  -r requirements.txt
+COPY . .
+CMD [ "python", "-u", "main.py" ]
