@@ -10,3 +10,17 @@ templates: []
 processors: []
 plugins: []
 resolvers: []
+build:
+  registry: ${DOMAIN}/${GITHUB_REPO_REF}
+  platforms:
+    - linux/amd64
+    - linux/arm64
+  images:
+    template:
+      image: template-script
+      dockerfile: cyan/Dockerfile
+      context: ./cyan
+    blob:
+      image: template-blob
+      dockerfile: cyan/blob.Dockerfile
+      context: .
