@@ -19,16 +19,22 @@ StartTemplateWithLambda(async (inquirer: IInquirer, determinism: IDeterminism): 
     `${prefix}language`,
   );
 
+  const includeSkills = await inquirer.select(
+    'Include Claude Code skills and CLAUDE.md?',
+    ['yes', 'no'],
+    `${prefix}skills`,
+  );
+
   const vars = await standardCyanModel(inquirer, cyanType);
 
   if (cyanType === 'Template') {
-    return PromptTemplate(inquirer, langType, vars);
+    return PromptTemplate(inquirer, langType, vars, includeSkills);
   } else if (cyanType === 'Plugin') {
-    return PromptPlugin(inquirer, langType, vars);
+    return PromptPlugin(inquirer, langType, vars, includeSkills);
   } else if (cyanType === 'Processor') {
-    return PromptProcessor(inquirer, langType, vars);
+    return PromptProcessor(inquirer, langType, vars, includeSkills);
   } else if (cyanType === 'Resolver') {
-    return PromptResolver(inquirer, langType, vars);
+    return PromptResolver(inquirer, langType, vars, includeSkills);
   } else {
     throw new Error('Invalid cyan type');
   }

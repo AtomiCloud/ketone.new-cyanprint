@@ -1,6 +1,11 @@
 import { type Cyan, type CyanGlob, GlobType, type IInquirer } from '@atomicloud/cyan-sdk';
 
-export async function PromptPlugin(inquirer: IInquirer, langType: string, vars: any): Promise<Cyan> {
+export async function PromptPlugin(
+  inquirer: IInquirer,
+  langType: string,
+  vars: any,
+  includeSkills: string,
+): Promise<Cyan> {
   const glob = (() => {
     if (langType == 'Typescript') {
       return TypescriptValues();
@@ -14,6 +19,18 @@ export async function PromptPlugin(inquirer: IInquirer, langType: string, vars: 
       throw new Error('Invalid language type');
     }
   })();
+
+  const skillsGlobs: CyanGlob[] =
+    includeSkills === 'yes'
+      ? [
+          {
+            root: 'plugin/skills',
+            exclude: [],
+            glob: '**/*',
+            type: GlobType.Copy,
+          },
+        ]
+      : [];
 
   return {
     processors: [
@@ -33,6 +50,7 @@ export async function PromptPlugin(inquirer: IInquirer, langType: string, vars: 
             glob: 'cyan.yaml',
             type: GlobType.Template,
           },
+          ...skillsGlobs,
         ],
         config: {
           vars,
