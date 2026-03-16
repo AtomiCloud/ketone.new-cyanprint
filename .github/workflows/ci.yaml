@@ -11,9 +11,25 @@ jobs:
     with:
       atomi_platform: ketone
       atomi_service: new-cyanprint
+  test:
+    name: Test
+    runs-on: ubuntu-22.04
+    env:
+      DOMAIN: ghcr.io
+      GITHUB_REPO_REF: ${{ github.repository }}
+      GITHUB_SHA: ${{ github.sha }}
+      GITHUB_BRANCH: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: AtomiCloud/actions.setup-nix@v2
+      - name: Run CyanPrint Tests
+        run: |
+          nix develop .#ci -c cyanprint --version
+          nix develop .#ci -c cyanprint test template .
   #
   docker:
     name: Build Docker - ${{ matrix.image_name }}
+    needs: test
     strategy:
       matrix:
         include:
