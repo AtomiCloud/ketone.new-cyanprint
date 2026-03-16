@@ -13,7 +13,10 @@ jobs:
       atomi_service: new-cyanprint
   test:
     name: Test
-    runs-on: ubuntu-22.04
+    runs-on:
+      - nscloud-ubuntu-22.04-amd64-4x8-with-cache
+      - nscloud-cache-size-50gb
+      - nscloud-cache-tag-ketone-new-cyanprint-nix-store-cache
     env:
       DOMAIN: ghcr.io
       GITHUB_REPO_REF: ${{ github.repository }}
