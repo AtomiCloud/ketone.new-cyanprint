@@ -8,6 +8,20 @@ tags:
   - default
   - cyanprint
 readme: README.MD
+build:
+  registry: ${DOMAIN}/${GITHUB_REPO_REF}
+  platforms:
+    - linux/amd64
+    - linux/arm64
+  images:
+    template:
+      image: template-template
+      dockerfile: ./cyan/Dockerfile
+      context: ./cyan
+    blob:
+      image: template-blob
+      dockerfile: ./cyan/blob.Dockerfile
+      context: ./cyan
 templates: []
 processors:
   - cyan/default

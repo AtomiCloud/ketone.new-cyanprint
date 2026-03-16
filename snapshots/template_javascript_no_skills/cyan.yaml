@@ -1,0 +1,26 @@
+username: testuser
+name: test-template
+description: A test template
+project: https://github.com/test/test
+source: https://github.com/test/test
+email: test@example.com
+tags: []
+readme: cyan/README.MD
+templates: []
+processors: []
+plugins: []
+resolvers: []
+build:
+  registry: ${DOMAIN}/${GITHUB_REPO_REF}
+  platforms:
+    - linux/amd64
+    - linux/arm64
+  images:
+    template:
+      image: template-script
+      dockerfile: cyan/Dockerfile
+      context: ./cyan
+    blob:
+      image: template-blob
+      dockerfile: cyan/blob.Dockerfile
+      context: .

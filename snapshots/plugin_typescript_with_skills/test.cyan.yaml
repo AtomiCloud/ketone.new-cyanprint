@@ -1,0 +1,8 @@
+tests:
+  - name: passthrough
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/passthrough
+    input: ./inputs/passthrough
+    config: {}

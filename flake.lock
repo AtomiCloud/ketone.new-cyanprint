@@ -334,11 +334,11 @@
         "treefmt-nix": "treefmt-nix_13"
       },
       "locked": {
-        "lastModified": 1751384550,
-        "narHash": "sha256-iIz+7B6A3cbKEBF2kELrPAW16CauRPk1rhBEYNbvq0Y=",
+        "lastModified": 1773563534,
+        "narHash": "sha256-q7meDdz1lKLkH4H1TopOnC1oiuO1Q7NSsuBqWAOqFYI=",
         "owner": "AtomiCloud",
         "repo": "sulfone.iridium",
-        "rev": "3c0af31f58400d217c75ffef20e06a24e7aa7151",
+        "rev": "c854e169fad538c2ae8d0d8a56b898d58a1e35a4",
         "type": "github"
       },
       "original": {
