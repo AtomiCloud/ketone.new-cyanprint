@@ -9,7 +9,7 @@ tags:
   - cyanprint
 readme: README.MD
 build:
-  registry: ${DOMAIN}/${GITHUB_REPO_REF}
+  registry: ${DOMAIN:-docker.io}/${GITHUB_REPO_REF:-kirinnee}
   platforms:
     - linux/amd64
     - linux/arm64
