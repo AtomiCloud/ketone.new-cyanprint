@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with CyanPrint plugins.
 
 ## Project Overview
 
-This is a CyanPrint plugin project. Plugins validate or transform the final output of CyanPrint templates, receiving the entire generated directory structure.
+This is a CyanPrint plugin project. Plugins validate or transform the final output of CyanPrint templates. Plugins receive the generated output directory and use native OS operations for file I/O and command execution.
 
 ## Key Files
 
@@ -37,10 +37,10 @@ Modify files in `plugin/` directories to change validation/transformation behavi
 
 ```bash
 # Run plugin tests
-cyanprint test plugin
+cyanprint test plugin .
 
 # Run specific test case
-cyanprint test plugin --case "test-name"
+cyanprint test plugin . --case "test-name"
 ```
 
 ### 3. Publish
@@ -54,41 +54,22 @@ cyanprint push plugin --build
 
 ### PluginInput
 
+Plugins receive a single input object with directory and config:
+
 ```typescript
-interface IPluginInput {
-  config: Record<string, any>;  // Configuration from template
-  readDir: (path: string) => Promise<string[]>;
-  readFile: (path: string) => Promise<string>;
-  fileExists: (path: string) => Promise<boolean>;
+interface PluginInput {
+  directory: string;  // Absolute path to the generated output directory
+  config: unknown;    // Configuration from template's cyan.yaml
 }
 ```
+
+**Important**: There are NO SDK file helper methods on PluginInput. Use native OS operations (fs, pathlib, System.IO).
 
 ### PluginOutput
 
 ```typescript
-interface IPluginOutput {
-  errors?: PluginError[];      // Validation errors (fails build)
-  warnings?: PluginWarning[];  // Warnings (non-blocking)
-  records?: PluginRecord[];    // Modified files
-}
-
-interface PluginError {
-  path: string;
-  message: string;
-  line?: number;
-  column?: number;
-}
-
-interface PluginWarning {
-  path: string;
-  message: string;
-  line?: number;
-  column?: number;
-}
-
-interface PluginRecord {
-  path: string;
-  content: string;
+interface PluginOutput {
+  directory: string;  // Return the directory path (typically input.directory)
 }
 ```
 
@@ -96,64 +77,47 @@ interface PluginRecord {
 
 **TypeScript:**
 ```typescript
-StartPluginWithLambda(async (input: IPluginInput): Promise<IPluginOutput> => {
-  // Validate or transform
-  return { errors, warnings, records };
+StartPluginWithLambda(async (input: PluginInput): Promise<PluginOutput> => {
+  // Use native fs for file I/O
+  return { directory: input.directory };
 });
 ```
 
 **Python:**
 ```python
-def plugin_logic(input: PluginInput) -> PluginOutput:
-    return PluginOutput(errors=errors, warnings=warnings, records=records)
+from cyanprintsdk import start_plugin_with_fn
+
+def plugin_logic(input) -> PluginOutput:
+    # Use pathlib / open() for file I/O
+    return PluginOutput(directory=input.directory)
 
 start_plugin_with_fn(plugin_logic)
 ```
 
 **C#:**
 ```csharp
+using sulfone_helium;
+
 PluginOutput PluginLogic(PluginInput input)
 {
-    return new PluginOutput { Errors = errors, Warnings = warnings, Records = records };
+    // Use System.IO for file I/O
+    return new PluginOutput { Directory = input.Directory };
 }
 
 CyanEngine.StartPlugin(PluginLogic);
 ```
 
-## Plugin Types
+## Native File I/O
 
-### Validation Plugins
+Plugins use OS-native operations:
 
-Check output without modifying files:
-
-```typescript
-const errors: PluginError[] = [];
-
-if (!await input.fileExists('README.md')) {
-  errors.push({
-    path: 'README.md',
-    message: 'README.md is required'
-  });
-}
-
-return { errors };
-```
-
-### Transformation Plugins
-
-Modify output files:
-
-```typescript
-const records: PluginRecord[] = [];
-
-const content = await input.readFile('src/index.ts');
-records.push({
-  path: 'src/index.ts',
-  content: transformContent(content)
-});
-
-return { records };
-```
+| Operation | TypeScript | Python | C# |
+|-----------|-----------|--------|-----|
+| Read file | `fs.readFileSync(path, 'utf-8')` | `Path(path).read_text()` | `File.ReadAllText(path)` |
+| Write file | `fs.writeFileSync(path, content)` | `Path(path).write_text(content)` | `File.WriteAllText(path, content)` |
+| Check exists | `fs.existsSync(path)` | `Path(path).exists()` | `File.Exists(path)` |
+| List directory | `fs.readdirSync(path)` | `list(Path(path).iterdir())` | `Directory.GetFiles(path)` |
+| Run command | `execSync(cmd, { cwd })` | `subprocess.run(cmd, cwd=)` | `Process.Start()` |
 
 ## Build/Push
 
@@ -186,7 +150,10 @@ test_cases:
     input:
       - path: "README.md"
         content: "# Project"
+      - path: "package.json"
+        content: '{"name": "test"}'
     config:
+      # Keys must match actual config keys from the entry point
       requireReadme: true
     expect:
       errors: []
@@ -196,9 +163,9 @@ test_cases:
 ### Run Tests
 
 ```bash
-cyanprint test plugin
-cyanprint test plugin --verbose
-cyanprint test plugin --update-snapshots
+cyanprint test plugin .
+cyanprint test plugin . --verbose
+cyanprint test plugin . --update-snapshots
 ```
 
 ## Project Structure

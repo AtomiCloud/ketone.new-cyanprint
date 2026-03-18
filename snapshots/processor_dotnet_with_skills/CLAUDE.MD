@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with CyanPrint processor
 
 ## Project Overview
 
-This is a CyanPrint processor project. Processors transform template files during CyanPrint execution, receiving files and configuration, then outputting transformed content.
+This is a CyanPrint processor project. Processors transform template files during CyanPrint execution. The processor lambda receives two parameters: `CyanProcessorInput` and `CyanFileHelper`.
 
 ## Key Files
 
@@ -37,10 +37,10 @@ Modify files in `processor/` directories to change transformation behavior.
 
 ```bash
 # Run processor tests
-cyanprint test processor
+cyanprint test processor .
 
 # Run specific test case
-cyanprint test processor --case "test-name"
+cyanprint test processor . --case "test-name"
 ```
 
 ### 3. Publish
@@ -52,56 +52,95 @@ cyanprint push processor --build
 
 ## SDK Types
 
-### ProcessorInput
+### Entry Point (TWO parameters)
 
 ```typescript
-interface IProcessorInput {
-  config: Record<string, any>;  // Configuration from template
-  readDir: (path: string) => Promise<string[]>;
-  readFile: (path: string) => Promise<string>;
-  fileExists: (path: string) => Promise<boolean>;
+StartProcessorWithLambda(
+  async (input: CyanProcessorInput, fileHelper: CyanFileHelper): Promise<ProcessorOutput> => {
+    // Process files
+    return { directory: input.writeDirectory };
+  }
+);
+```
+
+### CyanProcessorInput
+
+```typescript
+interface CyanProcessorInput {
+  readDirectory: string;   // Absolute path to input directory
+  writeDirectory: string;  // Absolute path to output directory
+  globs: CyanGlob[];      // Glob patterns from cyan.yaml
+  config: unknown;         // Configuration from template
+}
+```
+
+### CyanFileHelper
+
+The primary API for working with files:
+
+```typescript
+interface CyanFileHelper {
+  resolveAll(): VirtualFile[];                // Read all Template globs, copy all Copy globs — call this first
+  read(glob: CyanGlob): VirtualFile[];        // Read files matching a specific glob
+  get(glob: CyanGlob): VirtualFileReference[]; // Lazy references, call .readFile() to materialize
+  copy(glob: CyanGlob): void;                 // Copy files as-is from read dir to write dir
+  readDir: string;                            // Resolved read directory path
+  writeDir: string;                           // Resolved write directory path
+}
+```
+
+### VirtualFile
+
+```typescript
+interface VirtualFile {
+  content: string;   // Read or write the file content
+  relative: string;  // Path relative to read directory
+  read: string;      // Absolute read path
+  write: string;     // Absolute write path
+  writeFile(): void; // Persist changes to write directory
 }
 ```
 
 ### ProcessorOutput
 
 ```typescript
-interface IProcessorOutput {
-  records: ProcessorRecord[];
-}
-
-interface ProcessorRecord {
-  path: string;     // Output file path
-  content: string;  // File content
+interface ProcessorOutput {
+  directory: string;  // Return input.writeDirectory
 }
 ```
 
-### Entry Point
-
-**TypeScript:**
-```typescript
-StartProcessorWithLambda(async (input: IProcessorInput): Promise<IProcessorOutput> => {
-  // Transform files
-  return { records };
-});
-```
+### Multi-Language Entry Points
 
 **Python:**
 ```python
-def processor_logic(input: ProcessorInput) -> ProcessorOutput:
-    return ProcessorOutput(records=records)
+from cyanprintsdk import start_processor_with_fn
 
-start_processor_with_fn(processor_logic)
+def processor_fn(input, file_helper):
+    files = file_helper.resolve_all()
+    for f in files:
+        # Transform f.content
+        f.write_file()
+    return {"directory": input.write_directory}
+
+start_processor_with_fn(processor_fn)
 ```
 
 **C#:**
 ```csharp
-ProcessorOutput ProcessorLogic(ProcessorInput input)
+using sulfone_helium;
+
+ProcessorOutput ProcessorFn(ProcessorInput input, CyanFileHelper fileHelper)
 {
-    return new ProcessorOutput { Records = records };
+    var files = fileHelper.ResolveAll();
+    foreach (var file in files)
+    {
+        // Transform file.Content
+        file.WriteFile();
+    }
+    return new ProcessorOutput { Directory = input.WriteDirectory };
 }
 
-CyanEngine.StartProcessor(ProcessorLogic);
+CyanEngine.StartProcessor(ProcessorFn);
 ```
 
 ## Build/Push
@@ -136,6 +175,7 @@ test_cases:
       - path: "src/index.ts"
         content: "export function hello() {}"
     config:
+      # Keys must match actual config keys from the entry point
       prefix: "// Generated\n"
     snapshots:
       - path: "src/index.ts"
@@ -147,9 +187,9 @@ test_cases:
 ### Run Tests
 
 ```bash
-cyanprint test processor
-cyanprint test processor --verbose
-cyanprint test processor --update-snapshots
+cyanprint test processor .
+cyanprint test processor . --verbose
+cyanprint test processor . --update-snapshots
 ```
 
 ## Project Structure

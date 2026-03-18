@@ -89,9 +89,80 @@ User prompting interface:
 
 ```typescript
 interface IInquirer {
-  text(options: TextOptions): Promise<string>;
-  select(message: string, options: string[], id: string): Promise<string>;
+  text(msg: string, id: string): Promise<string>;
+  select(msg: string, id: string, options: string[]): Promise<string>;
+  checkbox(msg: string, id: string, options: string[]): Promise<string[]>;
+  confirm(msg: string, id: string): Promise<boolean>;
+  password(msg: string, id: string): Promise<string>;
+  dateSelect(msg: string, id: string): Promise<string>;
 }
+```
+
+### IDeterminism
+
+Deterministic value provider for testing:
+
+```typescript
+interface IDeterminism {
+  get(key: string, origin: () => string): string;
+}
+```
+
+### Multi-Language Entry Points
+
+**Python:**
+```python
+from cyanprintsdk import start_template_with_fn, IInquirer, IDeterminism, Cyan, CyanProcessor, CyanGlob, GlobType
+
+def template_fn(i: IInquirer, d: IDeterminism) -> Cyan:
+    name = i.text("Project name", "name")
+    return Cyan(
+        processors=[
+            CyanProcessor(
+                name="cyan/default",
+                files=[CyanGlob(root="template/typescript", glob="**/*", exclude=[], type=GlobType.Template)],
+                config={"vars": {"name": name}},
+            )
+        ],
+        plugins=[],
+    )
+
+start_template_with_fn(template_fn)
+```
+
+**C#:**
+```csharp
+using sulfone_helium;
+
+Cyan TemplateFn(IInquirer i, IDeterminism d)
+{
+    var name = i.Text("Project name", "name");
+
+    return new Cyan
+    {
+        Processors = new[]
+        {
+            new CyanProcessor
+            {
+                Name = "cyan/default",
+                Files = new[]
+                {
+                    new CyanGlob
+                    {
+                        Root = "template/typescript",
+                        Glob = "**/*",
+                        Exclude = Array.Empty<string>(),
+                        Type = GlobType.Template,
+                    }
+                },
+                Config = new { vars = new { name } },
+            }
+        },
+        Plugins = Array.Empty<CyanPlugin>(),
+    };
+}
+
+CyanEngine.StartTemplate(TemplateFn);
 ```
 
 ## Build/Push
@@ -123,17 +194,13 @@ test_cases:
   - name: "basic-test"
     description: "Basic template test"
     answer_state:
-      cyan/new/create: Template
-      cyan/new/language: Typescript
-      cyan/new/skills: yes
-      cyan/new/username: testuser
-      cyan/new/name: test-project
-      cyan/new/description: A test template
-      cyan/new/email: test@example.com
-      cyan/new/project: https://example.com/project
-      cyan/new/source: https://github.com/example/project
+      # Keys must match the id parameter from i.text(), i.select(), etc.
+      project-name: test-project
+      project-language: TypeScript
+      include-tests: "true"
     deterministic_state:
-      cyan/new/more-tags/0: no
+      # For d.get() keys with branching logic
+      add-more-options: "false"
     validate:
       - command: "test -f README.md"
         description: "README exists"

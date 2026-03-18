@@ -1,132 +1,138 @@
 ---
 name: writing-template
-description: Guide for writing CyanPrint templates
+description: Write or modify CyanPrint template code. Use when the user asks to add prompts, change template logic, modify the entry point, add processors/plugins/resolvers, or change generated output. Covers IInquirer question types (text, select, checkbox, confirm, password, dateSelect), processor configuration, and IDeterminism.
+allowed-tools: Read, Grep, Glob, Write
 ---
 
-# Writing CyanPrint Templates
+# Writing this Template
 
-## Overview
-
-This guide explains how to write CyanPrint templates - the primary artifact type that generates project scaffolding.
-
-## Template Architecture
-
-### Entry Point
-
-All templates use `StartTemplateWithLambda` as their entry point:
-
-**TypeScript:**
+## Entry Point Structure
 
 ```typescript
 import { StartTemplateWithLambda, type IInquirer, type IDeterminism, type Cyan } from '@atomicloud/cyan-sdk';
 
-StartTemplateWithLambda(async (inquirer: IInquirer, determinism: IDeterminism): Promise<Cyan> => {
-  // Your template logic here
+StartTemplateWithLambda(async (i: IInquirer, d: IDeterminism): Promise<Cyan> => {
+  // Prompt users and build configuration
+  return {
+    processors: [...],
+    plugins: [...],
+  };
 });
 ```
 
-**Python:**
+## IInquirer — Prompting Users
 
-```python
-from cyan_sdk import start_template_with_fn, IInquirer, Cyan
+Six question types are available. Each has a simple form and a Q-form with additional options:
 
-def template_logic(inquirer: IInquirer, determinism: IDeterminism) -> Cyan:
-    # Your template logic here
-    pass
-
-start_template_with_fn(template_logic)
-```
-
-**C#:**
-
-```csharp
-using Atomicloud.CyanSDK;
-
-Cyan TemplateLogic(IInquirer inquirer, IDeterminism determinism)
-{
-    // Your template logic here
-}
-
-CyanEngine.StartTemplate(TemplateLogic);
-```
-
-### Core Types
-
-#### Cyan
-
-The main configuration object returned by your template:
+### text — Free-text input
 
 ```typescript
-interface Cyan {
-  processors: Processor[]; // Processors to run on template files
-  plugins: Plugin[]; // Plugins to validate/transform output
-  resolvers?: Resolver[]; // Resolvers for multi-origin file conflicts
-}
+// Simple form
+const name = await i.text('What is the project name?', 'project-name');
+
+// Q-form with validation and defaults
+const name = await i.textQ({
+  message: 'What is the project name?',
+  id: 'project-name',
+  validate: v => (/^[a-z0-9-]+$/.test(v) ? null : 'Use lowercase letters, numbers, and hyphens'),
+  default: 'my-project',
+  initial: 'my-project',
+});
 ```
 
-#### CyanGlob
-
-Defines file groups to process:
+### select — Single choice
 
 ```typescript
-interface CyanGlob {
-  root: string; // Source directory relative to template root
-  glob: string; // Glob pattern to match files (e.g., "**/*")
-  exclude: string[]; // Patterns to exclude
-  type: GlobType; // How to handle matched files
-}
+// Simple form
+const lang = await i.select('What language?', 'language', ['TypeScript', 'Python', 'C#', 'JavaScript']);
+
+// Q-form with labeled choices
+const lang = await i.selectQ({
+  message: 'What language?',
+  id: 'language',
+  choices: [
+    { value: 'typescript', label: 'TypeScript' },
+    { value: 'python', label: 'Python' },
+    { value: 'csharp', label: 'C#' },
+    { value: 'javascript', label: 'JavaScript' },
+  ],
+});
 ```
 
-#### GlobType
-
-- `GlobType.Template` - Process files through the template engine (replace `{{ variables }}`)
-- `GlobType.Copy` - Copy files as-is without processing
-
-#### IInquirer
-
-Interface for prompting users:
+### checkbox — Multiple choices
 
 ```typescript
-interface IInquirer {
-  // Ask a text question
-  text(options: {
-    message: string;
-    id: string; // Unique key for the answer (used in templates)
-    desc?: string; // Optional description
-    type: QuestionType;
-    validate?: (input: string) => string | null;
-  }): Promise<string>;
+// Simple form
+const features = await i.checkbox('Which features?', 'features', ['auth', 'logging', 'testing']);
 
-  // Ask a selection question
-  select(message: string, options: string[], id: string): Promise<string>;
-}
+// Q-form
+const features = await i.checkboxQ({
+  message: 'Which features?',
+  id: 'features',
+  choices: [
+    { value: 'auth', label: 'Authentication' },
+    { value: 'logging', label: 'Logging' },
+    { value: 'testing', label: 'Testing' },
+  ],
+});
 ```
 
-### Variable Syntax
+### confirm — Yes/No
 
-Templates use double-brace syntax for variables:
+```typescript
+// Simple form
+const includeTests = await i.confirm('Include tests?', 'include-tests');
 
+// Q-form
+const includeTests = await i.confirmQ({
+  message: 'Include tests?',
+  id: 'include-tests',
+  default: true,
+  errorMessage: 'Please answer yes or no',
+});
 ```
-{{ variable_name }}
+
+### password — Secret input
+
+```typescript
+// Simple form
+const apiKey = await i.password('Enter API key:', 'api-key');
+
+// Q-form
+const apiKey = await i.passwordQ({
+  message: 'Enter API key:',
+  id: 'api-key',
+  confirmation: true,
+});
 ```
 
-For language-specific comment prefixes:
+### dateSelect — Date picker
 
+```typescript
+// Simple form
+const date = await i.dateSelect('Select release date:', 'release-date');
+
+// Q-form
+const date = await i.dateSelectQ({
+  message: 'Select release date:',
+  id: 'release-date',
+  min: '2024-01-01',
+  max: '2025-12-31',
+  validate: v => (v > new Date() ? 'Date must be in the future' : null),
+});
 ```
-// {{ variable_name }}    // JavaScript/TypeScript
-# {{ variable_name }}     // Python/Shell
-// {{ variable_name }}    // C#
+
+## IDeterminism — Deterministic Values
+
+Use `d.get()` for all prompt values to ensure deterministic test output:
+
+```typescript
+const name = await d.get('project-name', () => i.text('Project name?', 'project-name'));
 ```
 
-## Default Processor
+In tests, `deterministic_state` provides values directly. In interactive mode, the fallback function runs.
 
-All templates use `cyan/default` as the default processor. This processor handles:
-
-- Variable substitution using `{{ }}` syntax
-- File templating based on `CyanGlob` configurations
-- Standard parser configuration
-
-Example configuration:
+## Configuring the Default Processor
 
 ```typescript
 {
@@ -137,19 +143,23 @@ Example configuration:
         {
           root: 'template/typescript',
           glob: '**/*',
-          type: GlobType.Template,
+          type: GlobType.Template,  // Process {{var}} substitution
+          exclude: [],
+        },
+        {
+          root: 'template/common',
+          glob: '**/*',
+          type: GlobType.Copy,       // Copy files as-is
           exclude: [],
         },
       ],
       config: {
         vars: {
-          username: 'myuser',
-          name: 'my-template',
-          // ... other variables
+          username: username,
+          name: projectName,
+          description: projectDesc,
         },
-        parser: {
-          varSyntax: [['{{', '}}']],
-        },
+        varSyntax: [['{{', '}}']],  // Optional: customize delimiters
       },
     },
   ],
@@ -157,77 +167,20 @@ Example configuration:
 }
 ```
 
-## Searching the CyanPrint Registry
+## Adding Plugins
 
-### API Endpoints
-
-The CyanPrint registry API is available at:
-
-```
-https://api.zinc.sulfone.raichu.cluster.atomi.cloud/api/v1/
-```
-
-### Search for Artifacts
-
-Search for templates, processors, plugins, or resolvers:
-
-```
-GET /api/v1/{Type}?Search=<query>&Limit=<n>&Skip=<n>
+```typescript
+{
+  processors: [...],
+  plugins: [
+    {
+      name: 'username/plugin-name',
+      config: { /* plugin-specific config */ },
+    },
+  ],
+}
 ```
 
-Types: `Template`, `Processor`, `Plugin`, `Resolver`
+## Multi-Language Entry Points
 
-Example:
-
-```bash
-curl "https://api.zinc.sulfone.raichu.cluster.atomi.cloud/api/v1/Processor?Search=license&Limit=10"
-```
-
-### Get Artifact Details by Slug
-
-```
-GET /api/v1/{Type}/slug/{username}/{name}
-```
-
-Returns full details including README documentation.
-
-Example:
-
-```bash
-curl "https://api.zinc.sulfone.raichu.cluster.atomi.cloud/api/v1/Processor/slug/cyan/license"
-```
-
-### Browse Registry Web Interface
-
-Visit https://cyanprint.dev/registry to visually browse available artifacts.
-
-## Best Practices
-
-1. **Use descriptive question IDs**: The `id` field in `IInquirer` calls becomes the variable key in templates. Use a consistent prefix (e.g., `my-template/username`).
-
-2. **Validate user input**: Always provide validation functions for user prompts to catch errors early.
-
-3. **Organize files by type**: Use `GlobType.Template` for files that need variable substitution, `GlobType.Copy` for static files.
-
-4. **Document your template**: Create a clear README that explains what the template generates and what questions it asks.
-
-5. **Test your template**: Use `test.cyan.yaml` to define deterministic test cases.
-
-## Example Template Structure
-
-```
-my-template/
-├── cyan/
-│   ├── index.ts          # Entry point
-│   ├── src/
-│   │   └── prompts.ts    # User prompts
-│   ├── package.json
-│   └── tsconfig.json
-├── template/
-│   ├── typescript/       # TypeScript template files
-│   ├── javascript/       # JavaScript template files
-│   └── common/           # Shared files
-├── cyan.yaml             # Template metadata
-├── test.cyan.yaml        # Test configuration
-└── README.md
-```
+See [reference.md](./reference.md) for complete entry point skeletons in TypeScript, JavaScript, Python, and C#.

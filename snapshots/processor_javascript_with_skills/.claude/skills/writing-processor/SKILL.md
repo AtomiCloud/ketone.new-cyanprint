@@ -1,277 +1,128 @@
 ---
 name: writing-processor
-description: Guide for writing CyanPrint processors
+description: Write or modify CyanPrint processor code. Use when the user asks to change file transformations, modify the entry point, handle file processing, or change output generation. Covers entry point (StartProcessorWithLambda), CyanFileHelper (read/write/copy/resolveAll), and VirtualFile (content/read/write). Processor lambda receives (input, fileHelper) as two parameters.
+allowed-tools: Read, Grep, Glob, Write
 ---
 
-# Writing CyanPrint Processors
+# Writing this Processor
 
-## Overview
+## Entry Point
 
-Processors transform template files during CyanPrint execution. They receive files from the template, process them, and output transformed content.
-
-## Processor Architecture
-
-### Entry Points
-
-**TypeScript:**
-
-```typescript
-import { StartProcessorWithLambda, type IProcessorInput, type IProcessorOutput } from '@atomicloud/cyan-sdk';
-
-StartProcessorWithLambda(async (input: IProcessorInput): Promise<IProcessorOutput> => {
-  // Your processor logic here
-});
-```
-
-**Python:**
-
-```python
-from cyan_sdk import start_processor_with_fn, ProcessorInput, ProcessorOutput
-
-def processor_logic(input: ProcessorInput) -> ProcessorOutput:
-    # Your processor logic here
-    pass
-
-start_processor_with_fn(processor_logic)
-```
-
-**C#:**
-
-```csharp
-using Atomicloud.CyanSDK;
-
-ProcessorOutput ProcessorLogic(ProcessorInput input)
-{
-    // Your processor logic here
-}
-
-CyanEngine.StartProcessor(ProcessorLogic);
-```
-
-### Core Types
-
-#### ProcessorInput
-
-```typescript
-interface IProcessorInput {
-  config: Record<string, any>; // Configuration from template
-  readDir: (path: string) => Promise<string[]>; // List directory contents
-  readFile: (path: string) => Promise<string>; // Read file content
-  fileExists: (path: string) => Promise<boolean>; // Check if file exists
-}
-```
-
-#### ProcessorOutput
-
-```typescript
-interface IProcessorOutput {
-  records: ProcessorRecord[]; // Array of output records
-}
-
-interface ProcessorRecord {
-  path: string; // Output file path
-  content: string; // File content
-}
-```
-
-## Stream-Based File Transformation
-
-Processors follow a stream-based pattern:
-
-1. **Read input files** using `readDir` and `readFile`
-2. **Transform content** according to processor logic
-3. **Return output records** with transformed content
-
-### Example: License Header Processor
+Processors use `StartProcessorWithLambda` with **two parameters** — `CyanProcessorInput` and `CyanFileHelper`:
 
 ```typescript
 import {
   StartProcessorWithLambda,
-  type IProcessorInput,
-  type IProcessorOutput,
-  type ProcessorRecord,
+  type CyanProcessorInput,
+  type CyanFileHelper,
+  type ProcessorOutput,
 } from '@atomicloud/cyan-sdk';
 
-StartProcessorWithLambda(async (input: IProcessorInput): Promise<IProcessorOutput> => {
-  const config = input.config;
-  const licenseText = config.license || 'MIT';
-  const files = await input.readDir('.');
-
-  const records: ProcessorRecord[] = [];
-
-  for (const file of files) {
-    if (file.endsWith('.ts') || file.endsWith('.js')) {
-      const content = await input.readFile(file);
-      const header = `// License: ${licenseText}\n\n`;
-      records.push({
-        path: file,
-        content: header + content,
-      });
-    }
-  }
-
-  return { records };
+StartProcessorWithLambda(async (input: CyanProcessorInput, fileHelper: CyanFileHelper): Promise<ProcessorOutput> => {
+  // Process files using fileHelper
+  return { directory: input.writeDirectory };
 });
 ```
 
-## Configuration
-
-Processors receive configuration from the template's `cyan.yaml`:
-
-```yaml
-processors:
-  - name: myorg/my-processor
-    config:
-      license: Apache-2.0
-      includeTests: true
-      # ... processor-specific options
-```
-
-Access this configuration in your processor:
+## CyanProcessorInput
 
 ```typescript
-const config = input.config;
-const license = config.license;
-const includeTests = config.includeTests || false;
-```
-
-## File Operations
-
-### Reading Directory Structure
-
-```typescript
-// List all files in a directory
-const files = await input.readDir('src');
-
-// Recursively list files
-async function listAllFiles(dir: string): Promise<string[]> {
-  const entries = await input.readDir(dir);
-  const files: string[] = [];
-
-  for (const entry of entries) {
-    const fullPath = `${dir}/${entry}`;
-    // Assuming you can determine if it's a directory
-    files.push(fullPath);
-  }
-
-  return files;
+interface CyanProcessorInput {
+  readDirectory: string; // Absolute path to input directory
+  writeDirectory: string; // Absolute path to output directory
+  globs: CyanGlob[]; // Glob patterns from cyan.yaml
+  config: unknown; // Configuration from template
 }
 ```
 
-### Reading File Content
+## CyanFileHelper — The Primary API
+
+The `fileHelper` parameter is the primary interface for working with files:
+
+### resolveAll() — Start Here
+
+Call `fileHelper.resolveAll()` first. It reads all Template globs and copies all Copy globs:
 
 ```typescript
-const content = await input.readFile('src/index.ts');
+const files = fileHelper.resolveAll();
+// files: VirtualFile[] — all files available for transformation
 ```
 
-### Checking File Existence
+### read(glob) — Read Specific Files
 
 ```typescript
-const exists = await input.fileExists('README.md');
-if (exists) {
-  const readme = await input.readFile('README.md');
+const files = fileHelper.read(input.globs[0]);
+// files: VirtualFile[] — files matching a specific CyanGlob
+```
+
+### get(glob) — Lazy References
+
+```typescript
+const refs = fileHelper.get(input.globs[0]);
+// refs: VirtualFileReference[] — lazy, call .readFile() to materialize
+for (const ref of refs) {
+  const file = ref.readFile();
+  // file: VirtualFile
 }
 ```
 
-## Output Records
-
-### Creating New Files
+### copy(glob) — Copy Files As-Is
 
 ```typescript
-records.push({
-  path: 'generated/config.json',
-  content: JSON.stringify(config, null, 2),
-});
-```
-
-### Modifying Existing Files
-
-```typescript
-const original = await input.readFile('src/index.ts');
-const modified = original.replace(/OLD/g, 'NEW');
-
-records.push({
-  path: 'src/index.ts',
-  content: modified,
-});
-```
-
-### Filtering Files
-
-To exclude a file from output, simply don't include it in the records array.
-
-## Best Practices
-
-1. **Handle missing config gracefully**: Provide sensible defaults
-2. **Validate configuration early**: Check required fields at the start
-3. **Use async operations**: File operations are asynchronous
-4. **Document your config**: Clearly document expected configuration options
-5. **Preserve file metadata**: Consider preserving file permissions if relevant
-
-## Example: Full Processor Implementation
-
-```typescript
-import {
-  StartProcessorWithLambda,
-  type IProcessorInput,
-  type IProcessorOutput,
-  type ProcessorRecord,
-} from '@atomicloud/cyan-sdk';
-
-interface MyProcessorConfig {
-  prefix: string;
-  extensions: string[];
-  excludePatterns: string[];
+for (const glob of input.globs) {
+  if (glob.type === GlobType.Copy) {
+    fileHelper.copy(glob);
+  }
 }
+```
 
-StartProcessorWithLambda(async (input: IProcessorInput): Promise<IProcessorOutput> => {
-  // Parse and validate config
-  const config: MyProcessorConfig = {
-    prefix: input.config.prefix || '',
-    extensions: input.config.extensions || ['.ts', '.js'],
-    excludePatterns: input.config.excludePatterns || [],
-  };
+### readDir / writeDir — Resolved Directory Paths
 
-  if (!config.prefix) {
-    console.warn('No prefix configured, processor will not modify files');
+```typescript
+const readDir = fileHelper.readDir; // string
+const writeDir = fileHelper.writeDir; // string
+```
+
+## VirtualFile — Manipulating Files
+
+```typescript
+interface VirtualFile {
+  content: string; // Read or write the file content
+  relative: string; // Path relative to read directory
+  read: string; // Absolute read path
+  write: string; // Absolute write path
+  writeFile(): void; // Persist changes to write directory
+}
+```
+
+### Example: Transform All Files
+
+```typescript
+const files = fileHelper.resolveAll();
+for (const file of files) {
+  file.content = file.content.replaceAll('{{name}}', config.name);
+  file.writeFile();
+}
+```
+
+### Example: Selective Processing
+
+```typescript
+const files = fileHelper.resolveAll();
+for (const file of files) {
+  if (file.relative.endsWith('.ts')) {
+    file.content = `// Header\n${file.content}`;
+    file.writeFile();
   }
-
-  const records: ProcessorRecord[] = [];
-  const files = await input.readDir('.');
-
-  for (const file of files) {
-    // Check extension
-    const hasValidExtension = config.extensions.some(ext => file.endsWith(ext));
-    if (!hasValidExtension) continue;
-
-    // Check exclusion patterns
-    const isExcluded = config.excludePatterns.some(pattern => new RegExp(pattern).test(file));
-    if (isExcluded) continue;
-
-    // Process file
-    const content = await input.readFile(file);
-    const prefixed = config.prefix + content;
-
-    records.push({
-      path: file,
-      content: prefixed,
-    });
-  }
-
-  return { records };
-});
+}
 ```
 
-## Directory Structure
+## Return Value
 
+```typescript
+return { directory: input.writeDirectory };
 ```
-my-processor/
-├── cyan/
-│   ├── index.ts           # Entry point
-│   └── package.json
-├── processor/
-│   └── typescript/        # Processor implementation templates
-├── cyan.yaml              # Metadata
-├── Dockerfile             # Container build
-└── README.md
-```
+
+## Multi-Language Entry Points
+
+See [reference.md](./reference.md) for complete entry point skeletons in TypeScript, JavaScript, Python, and C#.

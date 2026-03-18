@@ -1,369 +1,133 @@
 ---
 name: testing-resolver
-description: Guide for testing CyanPrint resolvers
+description: Test this CyanPrint resolver. Use when the user asks to write resolver tests, add test cases with conflicting files, update snapshots, or debug resolver test failures. Covers test.cyan.yaml format with resolver_inputs (multiple files, same path), config, and snapshots.
 ---
 
-# Testing CyanPrint Resolvers
+# Testing this Resolver
 
-## Overview
+## Step 1: Understand what to test
 
-Resolvers can be tested using `test.cyan.yaml` files that define conflicting file inputs, configuration, and expected merged outputs.
+Read the entry point code (`cyan/index.ts` or equivalent) to find:
 
-## Test File Structure
+- What `input.config` keys the resolver reads (e.g., `config.strategy`, `config.preserveKeys`)
+- What resolution strategy it uses (last-wins, deep-merge, priority-based)
+- How it uses `FileOrigin` (template name, layer number)
 
-Create a `test.cyan.yaml` file in your resolver root:
+## Step 2: Write test.cyan.yaml
+
+Create a `test.cyan.yaml` file in the resolver root:
 
 ```yaml
-# test.cyan.yaml
 test_cases:
-  - name: 'merge-two-json-files'
-    description: 'Merge two package.json files'
+  - name: 'merge-two-files'
+    description: 'Merge two conflicting files'
     resolver_inputs:
-      - path: 'package.json'
-        content: '{"name": "base-project", "version": "1.0.0"}'
+      - path: 'config.yaml'
+        content: 'version: 1'
         origin:
-          template: 'base-template'
-      - path: 'package.json'
-        content: '{"dependencies": {"express": "^4.0.0"}}'
+          template: 'template-a'
+          layer: 0
+      - path: 'config.yaml'
+        content: 'version: 2'
         origin:
-          template: 'extended-template'
+          template: 'template-b'
+          layer: 1
     config:
-      strategy: deep-merge
+      # Key each entry to YOUR resolver's actual config keys from the entry point
+      strategy: highest-layer-wins
     snapshots:
-      - path: 'package.json'
-        name: 'merged-package-json'
+      - path: 'config.yaml'
+        name: 'resolved-output'
 ```
 
-## Resolver Inputs
+### resolver_inputs
 
-Define multiple files with the same path (conflict):
+Define multiple entries with **the same `path`** but different origins. This is the conflict being resolved:
 
 ```yaml
 resolver_inputs:
-  - path: 'package.json'
-    content: |
-      {
-        "name": "my-project",
-        "version": "1.0.0",
-        "dependencies": {
-          "lodash": "^4.0.0"
-        }
-      }
+  - path: 'config.yaml' # Same path for ALL entries
+    content: 'version: 1'
     origin:
-      template: 'base-template'
-
-  - path: 'package.json'
-    content: |
-      {
-        "dependencies": {
-          "express": "^4.0.0"
-        },
-        "devDependencies": {
-          "typescript": "^5.0.0"
-        }
-      }
+      template: 'template-a'
+      layer: 0 # IMPORTANT: number, NOT string — do NOT quote it
+  - path: 'config.yaml' # Same path
+    content: 'version: 2'
     origin:
-      template: 'extended-template'
-
-  - path: 'package.json'
-    content: |
-      {
-        "devDependencies": {
-          "jest": "^29.0.0"
-        }
-      }
-    origin:
-      layer: 'testing-layer'
+      template: 'template-b'
+      layer: 1
 ```
 
-### Origin Structure
+### config
+
+Keys must match the `input.config` keys your resolver actually reads. Extract them from the entry point code — do NOT invent fictional config keys.
+
+### validate
+
+Optional shell commands to verify output:
 
 ```yaml
-origin:
-  template: string # Template name (optional)
-  layer: string # Layer name (optional)
+validate:
+  - command: "grep -q 'version: 2' config.yaml"
+    description: 'Higher layer won'
 ```
 
-At least one of `template` or `layer` should be specified.
+### snapshots
 
-## Configuration
-
-Define resolver configuration for each test:
-
-```yaml
-config:
-  strategy: deep-merge
-  arrayStrategy: unique-concat
-  preserveKeys:
-    - name
-    - version
-```
-
-## Snapshots
-
-Snapshots capture expected resolved output:
+Declare expected resolved output:
 
 ```yaml
 snapshots:
-  - path: 'package.json'
-    name: 'merged-output'
-  - path: 'tsconfig.json'
-    name: 'merged-tsconfig'
+  - path: 'config.yaml'
+    name: 'resolved-output'
 ```
 
-Snapshots are stored in `__snapshots__/`:
+## Step 3: Run and iterate
 
+```bash
+# Run all resolver tests
+cyanprint test resolver .
+
+# Run with verbose output
+cyanprint test resolver . --verbose
+
+# Update snapshots after intentional changes
+cyanprint test resolver . --update-snapshots
 ```
-__snapshots__/
-├── merge-two-json-files/
-│   └── merged-output.snap
-└── priority-resolution/
-    └── ...
-```
 
-## Complete Test Examples
+## Commutativity Testing
 
-### Deep Merge Test
+Always include tests that verify the resolver produces the same output regardless of input order:
 
 ```yaml
 test_cases:
-  - name: 'deep-merge-json'
-    description: 'Deep merge two JSON files'
+  - name: 'commutativity-order-1'
     resolver_inputs:
       - path: 'config.json'
-        content: |
-          {
-            "app": {
-              "name": "my-app",
-              "port": 3000
-            },
-            "features": ["auth"]
-          }
-        origin:
-          template: 'base'
+        content: '{"a": 1}'
+        origin: { template: 'a', layer: 0 }
       - path: 'config.json'
-        content: |
-          {
-            "app": {
-              "port": 8080,
-              "debug": true
-            },
-            "features": ["logging"]
-          }
-        origin:
-          template: 'extended'
-    config:
-      strategy: deep-merge
-      arrayStrategy: concat
-    validate:
-      - command: "jq '.app.name' config.json | grep -q 'my-app'"
-        description: 'Original name preserved'
-      - command: "jq '.app.port' config.json | grep -q '8080'"
-        description: 'Port overridden'
-      - command: "jq '.features | length' config.json | grep -q '2'"
-        description: 'Arrays concatenated'
+        content: '{"b": 2}'
+        origin: { template: 'b', layer: 1 }
+    config: { strategy: deep-merge }
     snapshots:
       - path: 'config.json'
-        name: 'deep-merged-config'
-```
+        name: 'commutative-result'
 
-### Preserve Keys Test
-
-```yaml
-test_cases:
-  - name: 'preserve-package-keys'
-    description: 'Preserve name and version from base'
+  - name: 'commutativity-order-2'
     resolver_inputs:
-      - path: 'package.json'
-        content: |
-          {
-            "name": "original-name",
-            "version": "1.0.0",
-            "description": "Base description"
-          }
-        origin:
-          template: 'base'
-      - path: 'package.json'
-        content: |
-          {
-            "name": "extended-name",
-            "version": "2.0.0",
-            "description": "Extended description"
-          }
-        origin:
-          template: 'extended'
-    config:
-      strategy: deep-merge
-      preserveKeys:
-        - name
-        - version
-    validate:
-      - command: "jq '.name' package.json | grep -q 'original-name'"
-        description: 'Name preserved from base'
-      - command: "jq '.version' package.json | grep -q '1.0.0'"
-        description: 'Version preserved from base'
-      - command: "jq '.description' package.json | grep -q 'Extended'"
-        description: 'Description from extended'
-```
-
-### Priority Resolution Test
-
-```yaml
-test_cases:
-  - name: 'layer-priority'
-    description: 'Layer override takes priority'
-    resolver_inputs:
-      - path: 'settings.yaml'
-        content: |
-          debug: false
-          logLevel: info
-        origin:
-          template: 'base'
-      - path: 'settings.yaml'
-        content: |
-          debug: true
-          logLevel: debug
-        origin:
-          layer: 'development'
-    config:
-      strategy: priority
-      priority:
-        - layer: development
-        - template: base
-    validate:
-      - command: "grep 'debug: true' settings.yaml"
-        description: 'Layer setting wins'
+      - path: 'config.json'
+        content: '{"b": 2}'
+        origin: { template: 'b', layer: 1 }
+      - path: 'config.json'
+        content: '{"a": 1}'
+        origin: { template: 'a', layer: 0 }
+    config: { strategy: deep-merge }
     snapshots:
-      - path: 'settings.yaml'
-        name: 'priority-resolved-settings'
+      - path: 'config.json'
+        name: 'commutative-result'
 ```
 
-### Array Strategy Tests
+Both tests should snapshot to the same `commutative-result`.
 
-```yaml
-test_cases:
-  - name: 'array-concat'
-    description: 'Concatenate arrays'
-    resolver_inputs:
-      - path: 'tsconfig.json'
-        content: |
-          {
-            "compilerOptions": {
-              "lib": ["ES2020"]
-            }
-          }
-        origin:
-          template: 'base'
-      - path: 'tsconfig.json'
-        content: |
-          {
-            "compilerOptions": {
-              "lib": ["DOM"]
-            }
-          }
-        origin:
-          template: 'web'
-    config:
-      arrayStrategy: concat
-    validate:
-      - command: "jq '.compilerOptions.lib | length' tsconfig.json | grep -q '2'"
-        description: 'Arrays concatenated'
-    snapshots:
-      - path: 'tsconfig.json'
-        name: 'concat-arrays'
-
-  - name: 'array-unique-concat'
-    description: 'Concatenate with deduplication'
-    resolver_inputs:
-      - path: 'tsconfig.json'
-        content: |
-          {
-            "compilerOptions": {
-              "lib": ["ES2020", "DOM"]
-            }
-          }
-        origin:
-          template: 'base'
-      - path: 'tsconfig.json'
-        content: |
-          {
-            "compilerOptions": {
-              "lib": ["DOM", "DOM.Iterable"]
-            }
-          }
-        origin:
-          template: 'web'
-    config:
-      arrayStrategy: unique-concat
-    validate:
-      - command: "jq '.compilerOptions.lib | length' tsconfig.json | grep -q '3'"
-        description: 'Duplicates removed'
-    snapshots:
-      - path: 'tsconfig.json'
-        name: 'unique-concat-arrays'
-
-  - name: 'array-replace'
-    description: 'Replace arrays'
-    resolver_inputs:
-      - path: 'tsconfig.json'
-        content: |
-          {
-            "compilerOptions": {
-              "lib": ["ES2020"]
-            }
-          }
-        origin:
-          template: 'base'
-      - path: 'tsconfig.json'
-        content: |
-          {
-            "compilerOptions": {
-              "lib": ["ES2022"]
-            }
-          }
-        origin:
-          template: 'modern'
-    config:
-      arrayStrategy: replace
-    validate:
-      - command: "jq '.compilerOptions.lib | length' tsconfig.json | grep -q '1'"
-        description: 'Array replaced'
-      - command: "jq '.compilerOptions.lib[0]' tsconfig.json | grep -q 'ES2022'"
-        description: 'Has new value'
-```
-
-## Running Tests
-
-### Run All Tests
-
-```bash
-cyanprint test resolver
-```
-
-### Run Specific Test
-
-```bash
-cyanprint test resolver --case "deep-merge-json"
-```
-
-### Update Snapshots
-
-```bash
-cyanprint test resolver --update-snapshots
-```
-
-### Verbose Output
-
-```bash
-cyanprint test resolver --verbose
-```
-
-## Best Practices
-
-1. **Test all merge strategies**: Cover deep-merge, shallow-merge, last-wins
-2. **Test array handling**: Verify concat, unique-concat, replace behaviors
-3. **Test key preservation**: Ensure critical keys are preserved
-4. **Test priority**: Verify layer/template priority works correctly
-5. **Test edge cases**: Empty files, single file, many files
-6. **Use multiple origins**: Test template-template, layer-template, layer-layer conflicts
-7. **Validate output structure**: Ensure merged output is valid JSON/YAML
+See [reference.md](./reference.md) for complete examples.

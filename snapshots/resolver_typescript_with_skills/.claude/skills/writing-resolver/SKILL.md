@@ -1,356 +1,113 @@
 ---
 name: writing-resolver
-description: Guide for writing CyanPrint resolvers
+description: Write or modify CyanPrint resolver code. Use when the user asks to change conflict resolution logic, modify merge strategies, handle file origins, or change resolution behavior. Covers entry point (StartResolverWithLambda), ResolverInput/ResolverOutput, ResolvedFile, and FileOrigin. Must ensure commutativity and associativity (sort, unique, deterministic ordering).
+allowed-tools: Read, Grep, Glob, Write
 ---
 
-# Writing CyanPrint Resolvers
+# Writing this Resolver
 
-## Overview
-
-Resolvers handle conflicts when multiple templates or layers contribute files to the same path. They receive all conflicting files and determine which content to use or how to merge them.
-
-## Resolver Architecture
-
-### Entry Points
-
-**TypeScript:**
+## Entry Point
 
 ```typescript
-import { StartResolverWithLambda, type IResolverInput, type IResolverOutput } from '@atomicloud/cyan-sdk';
+import { StartResolverWithLambda, type ResolverInput, type ResolverOutput } from '@atomicloud/cyan-sdk';
 
-StartResolverWithLambda(async (input: IResolverInput): Promise<IResolverOutput> => {
-  // Your resolver logic here
+StartResolverWithLambda(async (input: ResolverInput): Promise<ResolverOutput> => {
+  // Resolve conflict
+  return { path, content };
 });
 ```
 
-**Python:**
-
-```python
-from cyan_sdk import start_resolver_with_fn, ResolverInput, ResolverOutput
-
-def resolver_logic(input: ResolverInput) -> ResolverOutput:
-    # Your resolver logic here
-    pass
-
-start_resolver_with_fn(resolver_logic)
-```
-
-**C#:**
-
-```csharp
-using Atomicloud.CyanSDK;
-
-ResolverOutput ResolverLogic(ResolverInput input)
-{
-    // Your resolver logic here
-}
-
-CyanEngine.StartResolver(ResolverLogic);
-```
-
-### Core Types
-
-#### ResolverInput
+## ResolverInput
 
 ```typescript
-interface IResolverInput {
-  config: Record<string, any>; // Configuration from template
-  files: ResolverFile[]; // Conflicting files from different origins
+interface ResolverInput {
+  config: Record<string, unknown>;
+  files: ResolvedFile[];
 }
+```
 
-interface ResolverFile {
-  path: string; // File path (same for all files in conflict)
-  content: string; // File content
-  origin: FileOrigin; // Where the file came from
+## ResolvedFile
+
+**All `files` entries have the same `path`** — that is the conflict being resolved:
+
+```typescript
+interface ResolvedFile {
+  path: string;
+  content: string;
+  origin: FileOrigin;
 }
+```
 
+## FileOrigin
+
+```typescript
 interface FileOrigin {
-  template?: string; // Template name if from a template
-  layer?: string; // Layer name if from a layer
+  template: string; // Which template produced this file
+  layer: number; // Layer number — IMPORTANT: number, NOT string
 }
 ```
 
-#### ResolverOutput
+**Critical**: `layer` is a `number`, not a string. Compare numerically, never as string.
+
+## ResolverOutput
+
+Return a single resolved file:
 
 ```typescript
-interface IResolverOutput {
-  path: string; // Output path (usually same as input)
+interface ResolverOutput {
+  path: string; // Same path as input files
   content: string; // Resolved content
 }
 ```
 
-## Multi-Origin Conflict Resolution
+## Commutativity and Associativity
 
-When multiple sources provide the same file path, resolvers decide the final content:
+CyanPrint may call the resolver with files in **any order**. Your result must be **identical** regardless of input ordering.
 
-### Example Conflict
-
-```
-files: [
-  {
-    path: "package.json",
-    content: '{"name": "base-project", "dependencies": {"lodash": "4.0.0"}}',
-    origin: { template: "base-template" }
-  },
-  {
-    path: "package.json",
-    content: '{"name": "extended-project", "dependencies": {"express": "4.0.0"}}',
-    origin: { template: "extended-template" }
-  }
-]
-```
-
-### Resolution Strategies
-
-#### 1. Last-Write Wins
-
-Use the file from the most recent source:
+### Pattern 1: Sort before processing
 
 ```typescript
-StartResolverWithLambda(async (input: IResolverInput): Promise<IResolverOutput> => {
-  // Use the last file in the array (most recent)
-  const lastFile = input.files[input.files.length - 1];
-
-  return {
-    path: lastFile.path,
-    content: lastFile.content,
-  };
+const sorted = [...input.files].sort((a, b) => {
+  if (a.origin.layer !== b.origin.layer) return a.origin.layer - b.origin.layer;
+  return a.origin.template.localeCompare(b.origin.template);
 });
 ```
 
-#### 2. First-Write Wins
-
-Use the file from the first source:
+### Pattern 2: Deduplicate after merge
 
 ```typescript
-StartResolverWithLambda(async (input: IResolverInput): Promise<IResolverOutput> => {
-  const firstFile = input.files[0];
-
-  return {
-    path: firstFile.path,
-    content: firstFile.content,
-  };
-});
+const allItems = sorted.flatMap(f => JSON.parse(f.content).items);
+const unique = [...new Set(allItems)].sort();
 ```
 
-#### 3. Origin Priority
-
-Select based on origin:
+### Pattern 3: Deterministic priority
 
 ```typescript
-StartResolverWithLambda(async (input: IResolverInput): Promise<IResolverOutput> => {
-  const priorityOrder = input.config.priority ?? ['extended', 'base'];
-
-  for (const priority of priorityOrder) {
-    const file = input.files.find(f => f.origin.template?.includes(priority) || f.origin.layer?.includes(priority));
-    if (file) {
-      return { path: file.path, content: file.content };
-    }
-  }
-
-  // Fallback to first file
-  return {
-    path: input.files[0].path,
-    content: input.files[0].content,
-  };
-});
+// Highest layer number wins — deterministic regardless of input order
+const winner = input.files.reduce((best, f) => (f.origin.layer > best.origin.layer ? f : best));
 ```
 
-#### 4. Content Merge
+## Resolution Strategies
 
-Merge content intelligently (especially for JSON/YAML):
+### Last-Write Wins (by layer)
 
 ```typescript
-StartResolverWithLambda(async (input: IResolverInput): Promise<IResolverOutput> => {
-  const path = input.files[0].path;
-
-  if (path.endsWith('.json')) {
-    const merged = mergeJsonFiles(input.files);
-    return { path, content: JSON.stringify(merged, null, 2) };
-  }
-
-  // For non-JSON, use last-write-wins
-  const lastFile = input.files[input.files.length - 1];
-  return { path, content: lastFile.content };
-});
-
-function mergeJsonFiles(files: ResolverFile[]): object {
-  let merged = {};
-
-  for (const file of files) {
-    const content = JSON.parse(file.content);
-    merged = deepMerge(merged, content);
-  }
-
-  return merged;
-}
-
-function deepMerge(target: any, source: any): any {
-  const result = { ...target };
-
-  for (const key of Object.keys(source)) {
-    if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
-      result[key] = deepMerge(result[key] ?? {}, source[key]);
-    } else {
-      result[key] = source[key];
-    }
-  }
-
-  return result;
-}
+const sorted = [...input.files].sort((a, b) => a.origin.layer - b.origin.layer);
+const last = sorted[sorted.length - 1];
+return { path: last.path, content: last.content };
 ```
 
-## Layer Concept
-
-Layers represent different levels of customization:
-
-1. **Base Layer**: Core template files
-2. **Extension Layers**: Additional functionality
-3. **Override Layers**: Custom modifications
-
-Example origin tracking:
+### Deep Merge (JSON)
 
 ```typescript
-// Check which layer the file came from
-const layerFile = input.files.find(f => f.origin.layer === 'custom');
-if (layerFile) {
-  // Layer override takes precedence
-  return { path: layerFile.path, content: layerFile.content };
+const sorted = [...input.files].sort((a, b) => a.origin.layer - b.origin.layer);
+let merged = {};
+for (const file of sorted) {
+  merged = deepMerge(merged, JSON.parse(file.content));
 }
+return { path: input.files[0].path, content: JSON.stringify(merged, null, 2) };
 ```
 
-## Configuration
+## Multi-Language Entry Points
 
-Resolvers receive configuration from the template's `cyan.yaml`:
-
-```yaml
-resolvers:
-  - name: myorg/json-merge-resolver
-    config:
-      strategy: deep-merge
-      arrayStrategy: concat # or 'replace'
-      preserveKeys:
-        - name
-        - version
-```
-
-Access in your resolver:
-
-```typescript
-const config = input.config;
-const strategy = config.strategy ?? 'last-write-wins';
-const preserveKeys = config.preserveKeys ?? [];
-```
-
-## Best Practices
-
-1. **Preserve essential fields**: For JSON merging, always keep name/version
-2. **Handle all file types**: Provide fallback for non-mergeable files
-3. **Document merge strategy**: Clearly explain how conflicts are resolved
-4. **Support configuration**: Allow users to customize merge behavior
-5. **Maintain valid syntax**: Ensure output is always valid (valid JSON, valid YAML, etc.)
-
-## Example: Complete JSON Merge Resolver
-
-```typescript
-import { StartResolverWithLambda, type IResolverInput, type IResolverOutput } from '@atomicloud/cyan-sdk';
-
-interface MergeConfig {
-  strategy: 'deep-merge' | 'shallow-merge' | 'last-wins';
-  arrayStrategy: 'concat' | 'replace' | 'unique-concat';
-  preserveKeys: string[];
-}
-
-StartResolverWithLambda(async (input: IResolverInput): Promise<IResolverOutput> => {
-  const config: MergeConfig = {
-    strategy: input.config.strategy ?? 'deep-merge',
-    arrayStrategy: input.config.arrayStrategy ?? 'replace',
-    preserveKeys: input.config.preserveKeys ?? ['name', 'version'],
-  };
-
-  const path = input.files[0].path;
-
-  if (path.endsWith('.json')) {
-    return resolveJson(input.files, config);
-  }
-
-  if (path.endsWith('.yaml') || path.endsWith('.yml')) {
-    return resolveYaml(input.files, config);
-  }
-
-  // Default: last-wins for other file types
-  const lastFile = input.files[input.files.length - 1];
-  return { path: lastFile.path, content: lastFile.content };
-});
-
-function resolveJson(files: ResolverFile[], config: MergeConfig): IResolverOutput {
-  const path = files[0].path;
-
-  if (config.strategy === 'last-wins') {
-    const lastFile = files[files.length - 1];
-    return { path, content: lastFile.content };
-  }
-
-  let merged: any = {};
-
-  // Track preserved keys from first file
-  const preserved: Record<string, any> = {};
-  const firstObj = JSON.parse(files[0].content);
-  for (const key of config.preserveKeys) {
-    if (firstObj[key] !== undefined) {
-      preserved[key] = firstObj[key];
-    }
-  }
-
-  // Merge all files
-  for (const file of files) {
-    const obj = JSON.parse(file.content);
-    merged = deepMerge(merged, obj, config.arrayStrategy);
-  }
-
-  // Restore preserved keys
-  Object.assign(merged, preserved);
-
-  return { path, content: JSON.stringify(merged, null, 2) };
-}
-
-function deepMerge(target: any, source: any, arrayStrategy: string): any {
-  const result = { ...target };
-
-  for (const key of Object.keys(source)) {
-    if (Array.isArray(source[key]) && Array.isArray(result[key])) {
-      switch (arrayStrategy) {
-        case 'concat':
-          result[key] = [...result[key], ...source[key]];
-          break;
-        case 'unique-concat':
-          result[key] = [...new Set([...result[key], ...source[key]])];
-          break;
-        case 'replace':
-        default:
-          result[key] = source[key];
-      }
-    } else if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
-      result[key] = deepMerge(result[key] ?? {}, source[key], arrayStrategy);
-    } else {
-      result[key] = source[key];
-    }
-  }
-
-  return result;
-}
-```
-
-## Directory Structure
-
-```
-my-resolver/
-├── cyan/
-│   ├── index.ts           # Entry point
-│   └── package.json
-├── resolver/
-│   └── typescript/        # Resolver implementation templates
-├── cyan.yaml              # Metadata
-├── Dockerfile             # Container build
-└── README.md
-```
+See [reference.md](./reference.md) for complete entry point skeletons in TypeScript, JavaScript, Python, and C#.

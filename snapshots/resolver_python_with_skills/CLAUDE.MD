@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with CyanPrint resolvers
 
 ## Project Overview
 
-This is a CyanPrint resolver project. Resolvers handle conflicts when multiple templates or layers contribute files to the same path, determining the final content.
+This is a CyanPrint resolver project. Resolvers handle conflicts when multiple templates or layers contribute files to the same path. They receive all conflicting files and produce a single resolved output.
 
 ## Key Files
 
@@ -37,10 +37,10 @@ Modify files in `resolver/` directories to change conflict resolution behavior.
 
 ```bash
 # Run resolver tests
-cyanprint test resolver
+cyanprint test resolver .
 
 # Run specific test case
-cyanprint test resolver --case "test-name"
+cyanprint test resolver . --case "test-name"
 ```
 
 ### 3. Publish
@@ -55,28 +55,40 @@ cyanprint push resolver --build
 ### ResolverInput
 
 ```typescript
-interface IResolverInput {
-  config: Record<string, any>;  // Configuration from template
-  files: ResolverFile[];        // Conflicting files from different origins
-}
-
-interface ResolverFile {
-  path: string;           // File path (same for all conflicts)
-  content: string;        // File content
-  origin: FileOrigin;     // Where the file came from
-}
-
-interface FileOrigin {
-  template?: string;      // Template name
-  layer?: string;         // Layer name
+interface ResolverInput {
+  config: Record<string, unknown>;
+  files: ResolvedFile[];
 }
 ```
+
+### ResolvedFile
+
+**All `files` entries have the same `path`** — that is the conflict being resolved:
+
+```typescript
+interface ResolvedFile {
+  path: string;
+  content: string;
+  origin: FileOrigin;
+}
+```
+
+### FileOrigin
+
+```typescript
+interface FileOrigin {
+  template: string;  // Which template produced this file
+  layer: number;     // Layer number — number, NOT string
+}
+```
+
+**Critical**: `layer` is a `number`, not a `string`. Compare numerically, never as string.
 
 ### ResolverOutput
 
 ```typescript
-interface IResolverOutput {
-  path: string;     // Output path
+interface ResolverOutput {
+  path: string;     // Same path as input files
   content: string;  // Resolved content
 }
 ```
@@ -85,7 +97,9 @@ interface IResolverOutput {
 
 **TypeScript:**
 ```typescript
-StartResolverWithLambda(async (input: IResolverInput): Promise<IResolverOutput> => {
+StartResolverWithLambda(async (input: ResolverInput): Promise<ResolverOutput> => {
+  const { config, files } = input;
+  const path = files[0].path;
   // Resolve conflict
   return { path, content };
 });
@@ -93,52 +107,40 @@ StartResolverWithLambda(async (input: IResolverInput): Promise<IResolverOutput> 
 
 **Python:**
 ```python
-def resolver_logic(input: ResolverInput) -> ResolverOutput:
-    return ResolverOutput(path=path, content=content)
+from cyanprintsdk import start_resolver_with_fn
 
-start_resolver_with_fn(resolver_logic)
+def resolver_fn(input):
+    config = input.config
+    files = input.files
+    path = files[0].path
+    # Resolve conflict
+    return {"path": path, "content": content}
+
+start_resolver_with_fn(resolver_fn)
 ```
 
 **C#:**
 ```csharp
-ResolverOutput ResolverLogic(ResolverInput input)
+using sulfone_helium;
+
+ResolverOutput ResolverFn(ResolverInput input)
 {
+    var files = input.Files;
+    var path = files[0].Path;
+    // Resolve conflict
     return new ResolverOutput { Path = path, Content = content };
 }
 
-CyanEngine.StartResolver(ResolverLogic);
+CyanEngine.StartResolver(ResolverFn);
 ```
 
-## Resolution Strategies
+## Commutativity Requirements
 
-### Last-Write Wins
+CyanPrint may call the resolver with files in **any order**. The resolver must produce **identical output** regardless of input ordering.
 
-```typescript
-const lastFile = input.files[input.files.length - 1];
-return { path: lastFile.path, content: lastFile.content };
-```
-
-### Priority-Based
-
-```typescript
-const priorityOrder = input.config.priority ?? ['custom', 'extended', 'base'];
-for (const priority of priorityOrder) {
-  const file = input.files.find(f =>
-    f.origin.template?.includes(priority) || f.origin.layer?.includes(priority)
-  );
-  if (file) return { path: file.path, content: file.content };
-}
-```
-
-### Deep Merge (JSON)
-
-```typescript
-let merged = {};
-for (const file of input.files) {
-  merged = deepMerge(merged, JSON.parse(file.content));
-}
-return { path, content: JSON.stringify(merged, null, 2) };
-```
+- Sort inputs before processing (by `layer` number, then `template` name)
+- Deduplicate arrays after concatenation
+- Define deterministic priority when origins conflict
 
 ## Build/Push
 
@@ -167,16 +169,18 @@ cyanprint push resolver
 ```yaml
 test_cases:
   - name: "merge-test"
-    description: "Test JSON merge"
+    description: "Test conflict resolution"
     resolver_inputs:
       - path: "package.json"
         content: '{"name": "base"}'
         origin:
           template: "base"
+          layer: 0
       - path: "package.json"
         content: '{"version": "1.0.0"}'
         origin:
           template: "extended"
+          layer: 1
     config:
       strategy: deep-merge
     snapshots:
@@ -184,12 +188,14 @@ test_cases:
         name: "merged-output"
 ```
 
+**Important**: In `resolver_inputs`, all entries have the same `path` and `layer` is a number (not quoted).
+
 ### Run Tests
 
 ```bash
-cyanprint test resolver
-cyanprint test resolver --verbose
-cyanprint test resolver --update-snapshots
+cyanprint test resolver .
+cyanprint test resolver . --verbose
+cyanprint test resolver . --update-snapshots
 ```
 
 ## Project Structure
@@ -218,9 +224,6 @@ resolvers:
   - name: username/resolver-name
     config:
       strategy: deep-merge
-      preserveKeys:
-        - name
-        - version
 ```
 
 ## Registry

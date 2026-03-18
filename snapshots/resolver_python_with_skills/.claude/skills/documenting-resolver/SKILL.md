@@ -1,278 +1,42 @@
 ---
 name: documenting-resolver
-description: Guide for documenting and using CyanPrint resolvers
+description: Document this CyanPrint resolver into README.MD. Use when the user asks to document the resolver, write a README, explain conflict resolution strategy, or describe merge behavior. Reads cyan.yaml and entry point code to extract config schema and resolution logic.
+allowed-tools: Read, Grep, Glob, Write
 ---
 
-# Documenting CyanPrint Resolvers
+# Documenting this Resolver
 
-## How to Use This Resolver
+## Step 1: Understand the artifact
 
-### Referencing in a Template
+Read `cyan.yaml` to extract:
 
-Resolvers are referenced in a template's `cyan.yaml` file in the `resolvers:` array:
+- **name**: The resolver's full identifier (e.g., `username/resolver-name`)
+- **description**: What the resolver does
+- **tags**: Categories for discoverability
+- **build**: Image registry information
 
-```yaml
-resolvers:
-  - name: myorg/json-merge-resolver
-    config:
-      # Resolver-specific configuration
-      strategy: deep-merge
-      arrayStrategy: concat
-```
+Read the entry point code (`cyan/index.ts` or equivalent for other languages) to extract:
 
-### When Resolvers Are Used
+- What `input.config` keys the resolver reads
+- What resolution strategy it uses (how `FileOrigin` is used)
+- Priority rules (which origin wins in conflicts)
+- Merge logic (deep merge, array concat, last-wins, etc.)
+- Whether it handles commutativity (sort, deduplicate, deterministic ordering)
 
-Resolvers are invoked when:
+## Step 2: Generate README.MD
 
-1. **Multiple templates** contribute files to the same path
-2. **Layers** add or modify the same file
-3. **Extensions** override base template files
+Follow the section template in [reference.md](./reference.md).
 
-### Resolver Execution Flow
+The README must include:
 
-1. Templates generate files via processors
-2. **Conflicts are detected** (same path, different sources)
-3. **Resolver receives all conflicting files** with their origins
-4. Resolver produces single output for each conflicting path
-5. Plugins validate the resolved output
+1. **Title** — the resolver name from `cyan.yaml`
+2. **Description** — from `cyan.yaml`
+3. **Purpose** — what resolution strategy is used
+4. **Configuration Schema** — a table of key, type, default, and description for each config entry
+5. **Resolution Strategy** — how conflicts are resolved
+6. **Origin Handling** — how `template` and `layer` are used for priority
+7. **Merge Examples** — showing input files with different origins and the resolved output
 
-## Configuration Options
+## Step 3: Write README.MD
 
-Each resolver defines its own configuration schema:
-
-```yaml
-resolvers:
-  - name: cyan/json-merge
-    config:
-      strategy: deep-merge # How to merge objects
-      arrayStrategy: concat # How to merge arrays
-      preserveKeys: # Keys to preserve from base
-        - name
-        - version
-
-  - name: cyan/yaml-merge
-    config:
-      strategy: deep-merge
-      preserveComments: true
-      indent: 2
-
-  - name: cyan/last-wins
-    config:
-      # No config needed - uses last source
-```
-
-## Understanding File Origins
-
-Each file in a conflict has an origin:
-
-```yaml
-# File origin structure
-origin:
-  template: 'myorg/base-template' # Which template contributed
-  layer: 'custom-overrides' # Which layer (if applicable)
-```
-
-This allows resolvers to make priority decisions:
-
-```yaml
-resolvers:
-  - name: cyan/priority-resolver
-    config:
-      priority: # Order of precedence (highest first)
-        - layer: custom-overrides
-        - template: extended-template
-        - template: base-template
-```
-
-## Conflict Resolution Strategies
-
-### Last-Write-Wins
-
-Most recent source wins:
-
-```yaml
-resolvers:
-  - name: cyan/last-wins
-    # No config - simply uses last file
-```
-
-**Use case:** Simple templates where order is predictable
-
-### Deep Merge
-
-Intelligently merge JSON/YAML:
-
-```yaml
-resolvers:
-  - name: cyan/json-merge
-    config:
-      strategy: deep-merge
-      arrayStrategy: unique-concat
-```
-
-**Use case:** package.json, tsconfig.json, config files
-
-### Priority-Based
-
-Explicit ordering:
-
-```yaml
-resolvers:
-  - name: cyan/priority-resolver
-    config:
-      priority:
-        - custom # Custom layer always wins
-        - extended # Then extended template
-        - base # Base template as fallback
-```
-
-**Use case:** Complex multi-template setups
-
-### Custom Logic
-
-Resolver-specific rules:
-
-```yaml
-resolvers:
-  - name: cyan/license-resolver
-    config:
-      preferLicense: Apache-2.0 # If available, use this
-      fallback: MIT # Otherwise use MIT
-```
-
-**Use case:** Domain-specific conflict resolution
-
-## Common Use Cases
-
-### Package.json Merging
-
-```yaml
-resolvers:
-  - name: cyan/package-json-merge
-    config:
-      mergeScripts: true # Combine script objects
-      mergeDependencies: true # Combine dependencies
-      devDependencyStrategy: merge # How to handle dev deps
-      preserveKeys:
-        - name
-        - version
-        - private
-```
-
-### Config File Merging
-
-```yaml
-resolvers:
-  - name: cyan/config-merge
-    config:
-      files:
-        - tsconfig.json
-        - .eslintrc.json
-        - .prettierrc.json
-      strategy: deep-merge
-```
-
-### README Merging
-
-```yaml
-resolvers:
-  - name: cyan/readme-merge
-    config:
-      strategy: concat # Append sections
-      includeSource: true # Note which template contributed
-```
-
-## Documenting Your Resolver
-
-When creating a resolver, document:
-
-### 1. Purpose
-
-```yaml
-# Purpose: Merges package.json files from multiple templates,
-# combining dependencies while preserving core metadata
-```
-
-### 2. Required Configuration
-
-```yaml
-# Required:
-#   None - works with defaults
-```
-
-### 3. Optional Configuration
-
-```yaml
-# Optional:
-#   strategy: 'deep-merge' | 'shallow-merge' | 'last-wins'
-#   arrayStrategy: 'concat' | 'replace' | 'unique-concat'
-#   preserveKeys: string[] - Keys to always take from first file
-```
-
-### 4. Supported File Types
-
-```yaml
-# Supports:
-#   - .json (full merge support)
-#   - .yaml, .yml (full merge support)
-#   - Other files (last-wins fallback)
-```
-
-### 5. Example Output
-
-Show before/after:
-
-```yaml
-# Input files:
-# base/package.json: { "name": "project", "dependencies": { "lodash": "4.0" } }
-# ext/package.json: { "dependencies": { "express": "4.0" } }
-
-# Output:
-# { "name": "project", "dependencies": { "lodash": "4.0", "express": "4.0" } }
-```
-
-## Complete Template Example
-
-```yaml
-# cyan.yaml
-info:
-  name: myorg/my-template
-  description: A template demonstrating resolver usage
-
-processors:
-  - name: cyan/default
-    config:
-      vars:
-        name: my-project
-
-# Resolvers handle conflicts
-resolvers:
-  - name: cyan/json-merge
-    config:
-      strategy: deep-merge
-      arrayStrategy: unique-concat
-      preserveKeys:
-        - name
-        - version
-        - private
-
-  - name: cyan/yaml-merge
-    config:
-      strategy: deep-merge
-      preserveComments: true
-
-# Plugins validate output
-plugins:
-  - name: cyan/schema-validator
-    config:
-      schemas:
-        - path: schemas/package.schema.json
-          target: package.json
-```
-
-## Finding Resolvers
-
-Browse available resolvers:
-
-- Web: https://cyanprint.dev/registry
-- API: `GET https://api.zinc.sulfone.raichu.cluster.atomi.cloud/api/v1/Resolver`
+Write the generated README.MD to the project root.
