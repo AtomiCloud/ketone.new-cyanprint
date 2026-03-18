@@ -1,336 +1,93 @@
 ---
 name: testing-plugin
-description: Guide for testing CyanPrint plugins
+description: Test this CyanPrint plugin. Use when the user asks to write plugin tests, add test cases with input files and config, update snapshots, or debug plugin test failures. Covers test.cyan.yaml format with input files, config, expect (errors/warnings), and snapshots.
 ---
 
-# Testing CyanPrint Plugins
+# Testing this Plugin
 
-## Overview
+## Step 1: Understand what to test
 
-Plugins can be tested using `test.cyan.yaml` files that define input files, configuration, and expected validation results.
+Read the entry point code (`cyan/index.ts` or equivalent) to find:
 
-## Test File Structure
+- What `input.config` keys the plugin reads (e.g., `config.requireReadme`, `config.forbiddenPatterns`)
+- What the plugin does (validation, transformation, or both)
+- What files it reads or checks
 
-Create a `test.cyan.yaml` file in your plugin root:
+## Step 2: Write test.cyan.yaml
+
+Create a `test.cyan.yaml` file in the plugin root:
 
 ```yaml
-# test.cyan.yaml
 test_cases:
   - name: 'validation-passes'
-    description: 'Test when all validation checks pass'
+    description: 'All validation checks pass'
     input:
       - path: 'README.md'
-        content: "# My Project\n\nDescription here"
+        content: '# My Project'
       - path: 'package.json'
-        content: |
-          {
-            "name": "my-project",
-            "version": "1.0.0"
-          }
+        content: '{"name": "test", "version": "1.0.0"}'
     config:
+      # Key each entry to YOUR plugin's actual config keys from the entry point
       requireReadme: true
-      requirePackageJson: true
+      requireLicense: false
     expect:
       errors: []
       warnings: []
 ```
 
-## Input Files
+### input
 
-Define input files that the plugin will receive:
+Define test input files that the plugin will receive in `input.directory`.
 
-```yaml
-input:
-  - path: 'README.md'
-    content: |
-      # Project Title
+### config
 
-      This is a description.
+Keys must match the `input.config` keys your plugin actually reads. Extract them from the entry point code — do NOT invent fictional config keys.
 
-  - path: 'package.json'
-    content: |
-      {
-        "name": "test-project",
-        "version": "1.0.0",
-        "license": "MIT"
-      }
+### expect
 
-  - path: 'src/index.ts'
-    content: |
-      export function main() {
-        console.log("Hello");
-      }
-```
-
-## Configuration
-
-Define plugin configuration for each test:
-
-```yaml
-config:
-  # Plugin-specific options
-  requireReadme: true
-  requireLicense: true
-  forbiddenPatterns:
-    - 'console.log'
-    - 'TODO'
-```
-
-## Expected Results
-
-### Validation Plugins
-
-Define expected errors and warnings:
+For **validation plugins**, define expected `errors` and `warnings`:
 
 ```yaml
 expect:
   errors:
     - path: 'README.md'
       messageContains: 'required'
-  warnings:
-    - path: 'src/index.ts'
-      messageContains: 'console.log'
+  warnings: []
 ```
 
-### Transformation Plugins
+### validate
 
-Use snapshots to verify output:
-
-```yaml
-snapshots:
-  - path: 'src/index.ts'
-    name: 'formatted-output'
-```
-
-## Validate Commands
-
-Run shell commands to verify plugin effects:
+Optional shell commands to run after plugin execution:
 
 ```yaml
 validate:
   - command: 'test -f src/index.ts'
-    description: 'File still exists after plugin run'
-
-  - command: "! grep -q 'console.log' src/index.ts"
-    description: 'console.log was removed'
+    description: 'File exists after plugin run'
 ```
 
-## Complete Test Examples
+### snapshots
 
-### Validation Plugin Tests
+For **transformation plugins**, declare expected output files:
 
 ```yaml
-# test.cyan.yaml
-test_cases:
-  - name: 'all-files-present'
-    description: 'Validation passes when all required files exist'
-    input:
-      - path: 'README.md'
-        content: '# Project'
-      - path: 'LICENSE'
-        content: 'MIT License'
-      - path: 'package.json'
-        content: '{"name": "test", "version": "1.0.0"}'
-    config:
-      requireReadme: true
-      requireLicense: true
-      requirePackageJson: true
-    expect:
-      errors: []
-      warnings: []
-
-  - name: 'missing-readme'
-    description: 'Validation fails when README is missing'
-    input:
-      - path: 'LICENSE'
-        content: 'MIT License'
-      - path: 'package.json'
-        content: '{"name": "test"}'
-    config:
-      requireReadme: true
-    expect:
-      errors:
-        - path: 'README.md'
-          messageContains: 'required'
-      warnings: []
-
-  - name: 'missing-license-warning'
-    description: 'Missing license produces warning'
-    input:
-      - path: 'README.md'
-        content: '# Project'
-      - path: 'package.json'
-        content: '{"name": "test"}'
-    config:
-      requireReadme: true
-      requireLicense: false
-      warnNoLicense: true
-    expect:
-      errors: []
-      warnings:
-        - path: 'LICENSE'
-          messageContains: 'license'
-
-  - name: 'forbidden-patterns'
-    description: 'Detect forbidden patterns in code'
-    input:
-      - path: 'src/main.ts'
-        content: |
-          export function main() {
-            console.log("debug");
-            // TODO: fix this
-          }
-    config:
-      forbiddenPatterns:
-        - 'console.log'
-        - 'TODO'
-    expect:
-      errors:
-        - path: 'src/main.ts'
-          messageContains: 'console.log'
-        - path: 'src/main.ts'
-          messageContains: 'TODO'
+snapshots:
+  - path: 'src/index.ts'
+    name: 'transformed-output'
 ```
 
-### Transformation Plugin Tests
-
-```yaml
-test_cases:
-  - name: 'format-typescript'
-    description: 'Format TypeScript files'
-    input:
-      - path: 'src/index.ts'
-        content: |
-          export    function   hello()   {
-          console.log( "Hello" ) ;
-          }
-    config:
-      indent: 2
-      semi: true
-    snapshots:
-      - path: 'src/index.ts'
-        name: 'formatted-index'
-
-  - name: 'remove-console-logs'
-    description: 'Remove console.log statements'
-    input:
-      - path: 'src/utils.ts'
-        content: |
-          export function debug() {
-            console.log("debug info");
-            return true;
-          }
-          export function log(msg: string) {
-            console.log(msg);
-          }
-    config:
-      removeConsoleLog: true
-    validate:
-      - command: "! grep -q 'console.log' src/utils.ts"
-        description: 'All console.log removed'
-    snapshots:
-      - path: 'src/utils.ts'
-        name: 'no-console-logs'
-```
-
-### Mixed Validation and Transformation
-
-```yaml
-test_cases:
-  - name: 'validate-and-transform'
-    description: 'Plugin that validates then transforms'
-    input:
-      - path: 'config.json'
-        content: |
-          {"name": "test", "debug": true}
-    config:
-      schema:
-        type: object
-        required: ['name']
-        properties:
-          name:
-            type: string
-          debug:
-            type: boolean
-      format: true
-      indent: 2
-    validate:
-      - command: 'test -f config.json'
-    snapshots:
-      - path: 'config.json'
-        name: 'formatted-config'
-```
-
-## Running Tests
-
-### Run All Tests
+## Step 3: Run and iterate
 
 ```bash
-cyanprint test plugin
+# Run all plugin tests
+cyanprint test plugin .
+
+# Run with verbose output
+cyanprint test plugin . --verbose
+
+# Update snapshots after intentional changes
+cyanprint test plugin . --update-snapshots
 ```
 
-### Run Specific Test
+If tests fail, check that your `config` keys match the actual config keys used in the entry point code.
 
-```bash
-cyanprint test plugin --case "missing-readme"
-```
-
-### Update Snapshots
-
-```bash
-cyanprint test plugin --update-snapshots
-```
-
-### Verbose Output
-
-```bash
-cyanprint test plugin --verbose
-```
-
-## Test Fixtures
-
-For complex scenarios, use fixture directories:
-
-```
-tests/
-├── fixtures/
-│   ├── valid-project/
-│   │   └── input/
-│   │       ├── README.md
-│   │       ├── LICENSE
-│   │       └── package.json
-│   └── invalid-project/
-│       └── input/
-│           └── package.json
-└── test.cyan.yaml
-```
-
-Reference fixtures:
-
-```yaml
-test_cases:
-  - name: 'fixture-valid'
-    fixture: 'fixtures/valid-project'
-    config:
-      requireReadme: true
-    expect:
-      errors: []
-
-  - name: 'fixture-invalid'
-    fixture: 'fixtures/invalid-project'
-    config:
-      requireReadme: true
-    expect:
-      errors:
-        - path: 'README.md'
-          messageContains: 'required'
-```
-
-## Best Practices
-
-1. **Test both success and failure cases**: Verify plugin handles valid and invalid input
-2. **Test edge cases**: Empty files, large files, special characters
-3. **Test all config options**: Each configuration option should have coverage
-4. **Use messageContains**: For error/warning messages, use partial matching
-5. **Keep fixtures minimal**: Only include files needed for the specific test
-6. **Document test purpose**: Clear descriptions help maintain tests
+See [reference.md](./reference.md) for complete examples.
