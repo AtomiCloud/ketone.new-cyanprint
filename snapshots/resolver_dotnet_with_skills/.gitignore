@@ -1,5 +1,3 @@
-.DS_Store
-.env
+bin
+obj
 .idea
-.direnv
-.pre-commit-config.yaml

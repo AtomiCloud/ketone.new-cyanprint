@@ -8,7 +8,7 @@ tests:
       value:
         path: ./snapshots/template_typescript_no_skills
     validate:
-      - cyanprint test template .
+      - cyanprint test template
     answer_state:
       cyan/new/create:
         type: String

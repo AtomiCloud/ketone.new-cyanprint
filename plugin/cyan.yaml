@@ -7,12 +7,12 @@ email: {{email }}
 tags: {{tags }}
 readme: README.MD
 build:
-  registry: ${DOMAIN}/${GITHUB_REPO_REF}
+  registry: ${DOMAIN:-docker.io}/${GITHUB_REPO_REF:-{{username }}}
   platforms:
     - linux/amd64
     - linux/arm64
   images:
     plugin:
-      image: plugin
+      image: {{name }}
       dockerfile: Dockerfile
       context: .

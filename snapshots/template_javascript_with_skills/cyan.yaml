@@ -7,20 +7,21 @@ email: test@example.com
 tags: []
 readme: cyan/README.MD
 templates: []
-processors: []
+processors:
+  - cyan/default
 plugins: []
 resolvers: []
 build:
-  registry: ${DOMAIN}/${GITHUB_REPO_REF}
+  registry: ${DOMAIN:-docker.io}/${GITHUB_REPO_REF:-testuser}
   platforms:
     - linux/amd64
     - linux/arm64
   images:
     template:
-      image: template-script
+      image: test-template
       dockerfile: cyan/Dockerfile
       context: ./cyan
     blob:
-      image: template-blob
+      image: test-template-blob
       dockerfile: cyan/blob.Dockerfile
       context: .

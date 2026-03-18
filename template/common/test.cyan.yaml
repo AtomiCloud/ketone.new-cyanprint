@@ -3,7 +3,7 @@ tests:
     expected:
       type: snapshot
       value:
-        path: fixtures/expected/basic_generation
+        path: cyan/fixtures/expected/basic_generation
     answer_state:
       cyan/new/username:
         type: String

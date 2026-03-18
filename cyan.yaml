@@ -21,7 +21,7 @@ build:
     blob:
       image: template-blob
       dockerfile: ./cyan/blob.Dockerfile
-      context: ./cyan
+      context: .
 templates: []
 processors:
   - cyan/default
