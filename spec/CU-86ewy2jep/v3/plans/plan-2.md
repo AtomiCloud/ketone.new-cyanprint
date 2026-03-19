@@ -1,26 +1,91 @@
-# Plan 2: Iteratively test and fix all 32 test cases
+# Plan 2: Restructure writing skills from 4 combined → 16 per-language
 
-Run the full test suite and fix any failing tests by updating snapshots or source templates.
+Remove the 4 combined writing skills and create 16 per-language writing skills.
 
-## Process
+## Research
 
-For each test case, run it and handle the result:
+Read SDK patterns from helium:
 
-1. Run `direnv exec . cyanprint test template --test <test_name> .`
-2. **Pass** → move to next
-3. **Fail** → classify and fix:
-   - Snapshot mismatch → run `--update-snapshots` if the diff is expected (skills changed)
-   - Nested validate fail → trace root cause back to source templates
-4. Re-run to confirm fix
+- `../../sulfone/helium/sdks/node/src/` — TypeScript/JavaScript
+- `../../sulfone/helium/sdks/python/` — Python
+- `../../sulfone/helium/sdks/dotnet/` — C#
 
-## Test order (all 32 cases)
+## Remove (4 directories, 8 files)
 
-4 artifacts x 4 languages x 2 skill variants = 32 tests.
+- `template/skills/.claude/skills/writing-template/` (SKILL.md + reference.md)
+- `plugin/skills/.claude/skills/writing-plugin/` (SKILL.md + reference.md)
+- `processor/skills/.claude/skills/writing-processor/` (SKILL.md + reference.md)
+- `resolver/skills/.claude/skills/writing-resolver/` (SKILL.md + reference.md)
 
-For each, run: `direnv exec . cyanprint test template --test <test_name> .`
+## Create (16 SKILL.md files)
 
-## Final verification
+```
+template/skills/.claude/skills/
+├── writing-template-typescript/SKILL.md
+├── writing-template-javascript/SKILL.md
+├── writing-template-python/SKILL.md
+└── writing-template-dotnet/SKILL.md
 
-Run full suite: `direnv exec . cyanprint test template .`
+plugin/skills/.claude/skills/
+├── writing-plugin-typescript/SKILL.md
+├── writing-plugin-javascript/SKILL.md
+├── writing-plugin-python/SKILL.md
+└── writing-plugin-dotnet/SKILL.md
 
-All 32 must pass.
+processor/skills/.claude/skills/
+├── writing-processor-typescript/SKILL.md
+├── writing-processor-javascript/SKILL.md
+├── writing-processor-python/SKILL.md
+└── writing-processor-dotnet/SKILL.md
+
+resolver/skills/.claude/skills/
+├── writing-resolver-typescript/SKILL.md
+├── writing-resolver-javascript/SKILL.md
+├── writing-resolver-python/SKILL.md
+└── writing-resolver-dotnet/SKILL.md
+```
+
+Each per-language skill shows ONLY that language's entry point, imports, types, and idiomatic patterns. Cross-check against helium SDKs.
+
+## What each writing skill must teach (from v1 spec)
+
+### writing-template (all languages)
+
+1. All question types — text, select, checkbox, confirm, password, dateSelect with both simple and Q-forms
+2. IDeterminism — d.get(key, origin) for deterministic values in tests
+3. Using processors — Configure cyan/default processor with vars map and custom varSyntax
+4. Using plugins — Add CyanPlugin entries when needed
+5. Registry search — When cyan/default isn't enough, search for additional processors
+
+### writing-processor (all languages)
+
+1. CyanFileHelper — resolveAll(), read(glob), get(glob), copy(glob)
+2. VirtualFile — Read/write content, call writeFile() to persist
+3. Two-parameter entry — (input, fileHelper)
+
+### writing-plugin (all languages)
+
+1. No SDK file helpers — PluginInput only has { directory, config }
+2. Native file I/O — fs (Node), pathlib/open (Python), System.IO (C#)
+3. Command execution — child_process (Node), subprocess (Python), Process (C#)
+4. File mutation — Read from input.directory, modify, write back
+
+### writing-resolver (all languages)
+
+1. All inputs have same path — Multiple ResolvedFile entries, all with same path
+2. FileOrigin — { template: string, layer: number } (layer is number)
+3. Commutativity/associativity — Sort arrays, deduplicate, define priority
+4. Single output — Return one ResolverOutput with resolved path + content
+
+## CLAUDE.md updates (4 files)
+
+Update to reference new per-language writing skill names:
+
+- `template/skills/CLAUDE.md`
+- `plugin/skills/CLAUDE.md`
+- `processor/skills/CLAUDE.md`
+- `resolver/skills/CLAUDE.md`
+
+## fix-meta-template-test skill
+
+Cross-check `.claude/skills/fix-meta-template-test/SKILL.md` — fix any wrong test syntax references per iridium.
