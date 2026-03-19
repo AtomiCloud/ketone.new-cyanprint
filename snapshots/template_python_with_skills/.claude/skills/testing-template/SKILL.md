@@ -1,6 +1,6 @@
 ---
 name: testing-template
-description: Test this CyanPrint template. Use when the user asks to write tests, add test cases, update snapshots, or debug template test failures. Covers test.cyan.yaml format with answer_state, deterministic_state, validate commands, and snapshot testing.
+description: Test this CyanPrint template. Use when the user asks to write tests, add test cases, update snapshots, or debug template test failures. Covers test.cyan.yaml format with answer_state, deterministic_state, validate commands, and expected output.
 ---
 
 # Testing this Template
@@ -11,47 +11,82 @@ Read the entry point code (`cyan/index.ts` or equivalent) to find YOUR prompt ID
 
 Also note any `d.get(key, ...)` calls — these keys go in `deterministic_state`.
 
+Determine the template's full registry path (e.g., `myorg/my-template`) — this prefix is used in `answer_state` keys.
+
 ## Step 2: Write test.cyan.yaml
 
 Create a `test.cyan.yaml` file in the template root:
 
 ```yaml
-test_cases:
+tests:
   - name: 'basic-test'
-    description: 'Basic template generation'
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/basic-test
     answer_state:
-      # Key each entry to YOUR prompt IDs, NOT any other prefix
-      project-name: my-project
-      project-language: typescript
-      include-tests: 'true'
+      myorg/my-template/project-name:
+        type: String
+        value: my-project
+      myorg/my-template/project-language:
+        type: String
+        value: TypeScript
+      myorg/my-template/include-tests:
+        type: Bool
+        value: true
     deterministic_state:
-      # For d.get() keys with branching logic
-      add-more-features: 'false'
+      timestamp: '1700000000'
     validate:
-      - command: 'test -f cyan/index.ts'
-        description: 'Entry point exists'
-      - command: 'test -f cyan.yaml'
-        description: 'Metadata file exists'
-    snapshots:
-      - path: 'cyan.yaml'
-        name: 'metadata'
+      - test -f cyan/index.ts
+      - test -f cyan.yaml
 ```
 
 ### answer_state
 
-Keys must match the `id` values from your entry point's `i.text(...)`, `i.select(...)`, etc. calls. Do NOT use fictional or hardcoded keys — extract them from the actual code.
+Keys are `{registry-path}/{prompt-id}`. The value is an object with `type` and `value`:
+
+| IInquirer Call                      | type           | value example                    |
+| ----------------------------------- | -------------- | -------------------------------- |
+| `i.text(msg, "name")`               | `String`       | `"my-project"`                   |
+| `i.select(msg, "lang", opts)`       | `String`       | `"TypeScript"`                   |
+| `i.checkbox(msg, "features", opts)` | `StringArray`  | `["docker", "ci"]`               |
+| `i.confirm(msg, "use_docker")`      | `Bool`         | `true` or `false`                |
+| `i.password(msg, "token")`          | `String`       | `"secret"`                       |
+| `i.dateSelect(msg, "date")`         | `String`       | `"2024-01-15"`                   |
+
+The `{registry-path}` prefix matches the template's full name (organization/template-name). Extract prompt IDs from the actual entry point code — do NOT use fictional keys.
 
 ### deterministic_state
 
-Use for `d.get(key, ...)` calls that control branching logic (e.g., "add another?" loops).
+Maps `d.get(key, ...)` keys to fixed string values for deterministic output:
+
+```yaml
+deterministic_state:
+  timestamp: '1700000000'
+  uuid: '00000000-0000-0000-0000-000000000000'
+```
+
+### expected
+
+Declares expected output using a snapshot path. The test runner compares the generated output against files in that directory:
+
+```yaml
+expected:
+  type: snapshot
+  value:
+    path: ./snapshots/basic-test
+```
 
 ### validate
 
-Optional shell commands that run after template generation to verify output.
+Optional shell commands (plain strings) that run after template generation:
 
-### snapshots
-
-Declare expected output files. Snapshots are stored in `__snapshots__/`.
+```yaml
+validate:
+  - test -f package.json
+  - test -d src
+  - grep -q 'my-project' package.json
+```
 
 ## Step 3: Run and iterate
 
@@ -66,6 +101,6 @@ cyanprint test template . --verbose
 cyanprint test template . --update-snapshots
 ```
 
-If tests fail, check that your `answer_state` keys match the actual prompt IDs in the entry point code.
+If tests fail, check that your `answer_state` keys use the correct `{registry-path}/{prompt-id}` format and that types match.
 
 See [reference.md](./reference.md) for a complete example.

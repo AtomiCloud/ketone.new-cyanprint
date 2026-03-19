@@ -1,6 +1,6 @@
 ---
 name: testing-processor
-description: Test this CyanPrint processor. Use when the user asks to write processor tests, add test cases with input files, update snapshots, or debug processor test failures. Covers test.cyan.yaml format with input files, config, validate commands, and snapshots.
+description: Test this CyanPrint processor. Use when the user asks to write processor tests, add test cases with input files, update snapshots, or debug processor test failures. Covers test.cyan.yaml format with input directories, config, validate commands, and expected output.
 ---
 
 # Testing this Processor
@@ -13,59 +13,85 @@ Read the entry point code (`cyan/index.ts` or equivalent) to find:
 - What file patterns it handles (from `input.globs` or the cyan.yaml processor config)
 - What transformations it applies
 
-## Step 2: Write test.cyan.yaml
+## Step 2: Prepare input files
+
+Create input directories with files the processor will transform:
+
+```
+inputs/
+├── basic/
+│   └── src/
+│       └── index.ts
+└── multi-file/
+    ├── src/
+    │   ├── app.ts
+    │   └── style.css
+    └── README.md
+```
+
+## Step 3: Write test.cyan.yaml
 
 Create a `test.cyan.yaml` file in the processor root:
 
 ```yaml
-test_cases:
-  - name: 'basic-transformation'
-    description: 'Test basic file transformation'
-    input:
-      - path: 'src/index.ts'
-        content: |
-          export function hello() {
-            return "Hello";
-          }
+tests:
+  - name: 'basic-substitution'
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/basic-substitution
+    input: ./inputs/basic
     config:
-      # Key each entry to YOUR processor's actual config keys from the entry point
-      prefix: "// Generated\n"
-    snapshots:
-      - path: 'src/index.ts'
-        name: 'prefixed-output'
+      projectName: my-app
+      version: '1.0.0'
+    validate:
+      - grep -q 'my-app' src/index.ts
 ```
 
 ### input
 
-Define test input files. Paths should match the processor's glob patterns from cyan.yaml.
+Path to a directory containing input files the processor receives. Paths should match the processor's glob patterns from cyan.yaml.
+
+```yaml
+input: ./inputs/basic
+```
 
 ### config
 
 Keys must match the `input.config` keys your processor actually reads. Extract them from the entry point code — do NOT invent fictional config keys.
 
+### expected
+
+Declares expected output using a snapshot path:
+
+```yaml
+expected:
+  type: snapshot
+  value:
+    path: ./snapshots/basic-substitution
+```
+
 ### validate
 
-Optional shell commands to verify output:
+Optional plain shell commands to verify output:
 
 ```yaml
 validate:
-  - command: 'test -f src/index.ts'
-    description: 'Output file exists'
-  - command: "grep -q 'Generated' src/index.ts"
-    description: 'Prefix was added'
+  - test -f src/index.ts
+  - grep -q 'Generated' src/index.ts
 ```
 
-### snapshots
+### globs
 
-Declare expected output files:
+Optional list of glob patterns to apply. Overrides the processor's default globs:
 
 ```yaml
-snapshots:
-  - path: 'src/index.ts'
-    name: 'transformed-output'
+globs:
+  - pattern: '**/*.ts'
+    type: Template
 ```
 
-## Step 3: Run and iterate
+## Step 4: Run and iterate
 
 ```bash
 # Run all processor tests

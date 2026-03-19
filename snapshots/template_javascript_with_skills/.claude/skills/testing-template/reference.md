@@ -3,135 +3,168 @@
 ## test.cyan.yaml Format
 
 ```yaml
-test_cases:
+tests:
   - name: 'test-case-name'
-    description: 'Description of what this test verifies'
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/test-case-name
     answer_state:
-      # Keys here are YOUR prompt IDs from i.text(msg, id), i.select(msg, id, opts), etc.
-      name: my-project
-      language: TypeScript
-      features:
-        - docker
-        - ci
-      use_linting: true
+      myorg/my-template/name:
+        type: String
+        value: my-project
+      myorg/my-template/language:
+        type: String
+        value: TypeScript
+      myorg/my-template/features:
+        type: StringArray
+        value:
+          - docker
+          - ci
+      myorg/my-template/use_linting:
+        type: Bool
+        value: true
     deterministic_state:
-      # Keys here match d.get(key, ...) calls in your entry point
-      timestamp: '1234567890'
+      timestamp: '1700000000'
       uuid: '00000000-0000-0000-0000-000000000000'
     validate:
-      - command: 'test -f package.json'
-        description: 'package.json exists'
-      - command: 'test -d src'
-        description: 'src directory exists'
-      - command: "grep -q 'my-project' package.json"
-        description: 'Project name appears in package.json'
-    snapshots:
-      - path: '.'
-        name: 'full-output'
+      - test -f package.json
+      - test -d src
+      - grep -q 'my-project' package.json
 ```
 
 ## Complete Example with Multiple Test Cases
 
+This template is published as `myorg/my-template` and prompts for `name`, `language`, `description`, `author`, and `useDocker`:
+
 ```yaml
-test_cases:
+tests:
   - name: 'typescript-basic'
-    description: 'Basic TypeScript project generation'
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/typescript-basic
     answer_state:
-      name: ts-project
-      language: TypeScript
-      description: A TypeScript project
-      author: testuser
-      use_docker: true
+      myorg/my-template/name:
+        type: String
+        value: ts-project
+      myorg/my-template/language:
+        type: String
+        value: TypeScript
+      myorg/my-template/description:
+        type: String
+        value: A TypeScript project
+      myorg/my-template/author:
+        type: String
+        value: testuser
+      myorg/my-template/useDocker:
+        type: Bool
+        value: true
     deterministic_state:
       timestamp: '1700000000'
     validate:
-      - command: 'test -f tsconfig.json'
-        description: 'TypeScript config exists'
-      - command: 'test -f Dockerfile'
-        description: 'Dockerfile exists'
-      - command: "grep -q 'ts-project' package.json"
-        description: 'Project name in package.json'
-    snapshots:
-      - path: '.'
-        name: 'ts-basic-output'
+      - test -f tsconfig.json
+      - test -f Dockerfile
+      - grep -q 'ts-project' package.json
 
   - name: 'python-minimal'
-    description: 'Minimal Python project without Docker'
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/python-minimal
     answer_state:
-      name: py-project
-      language: Python
-      description: A Python project
-      author: testuser
-      use_docker: false
+      myorg/my-template/name:
+        type: String
+        value: py-project
+      myorg/my-template/language:
+        type: String
+        value: Python
+      myorg/my-template/description:
+        type: String
+        value: A Python project
+      myorg/my-template/author:
+        type: String
+        value: testuser
+      myorg/my-template/useDocker:
+        type: Bool
+        value: false
     deterministic_state:
       timestamp: '1700000000'
     validate:
-      - command: 'test -f pyproject.toml'
-        description: 'Python config exists'
-      - command: 'test ! -f Dockerfile'
-        description: 'No Dockerfile when Docker disabled'
-    snapshots:
-      - path: '.'
-        name: 'py-minimal-output'
+      - test -f pyproject.toml
+      - test ! -f Dockerfile
 ```
 
 ## Field Reference
 
 ### answer_state
 
-Maps prompt IDs to their pre-filled values. The keys MUST match the `id` parameter used in your `IInquirer` calls:
+Maps `{registry-path}/{prompt-id}` to answer objects. The `type` must match the IInquirer call:
 
-| IInquirer Call                      | answer_state Value Type                   |
-| ----------------------------------- | ----------------------------------------- |
-| `i.text(msg, "name")`               | `name: "string value"`                    |
-| `i.select(msg, "lang", opts)`       | `lang: "selected option"`                 |
-| `i.checkbox(msg, "features", opts)` | `features: ["opt1", "opt2"]`              |
-| `i.confirm(msg, "use_docker")`      | `use_docker: true` or `use_docker: false` |
-| `i.password(msg, "token")`          | `token: "secret value"`                   |
-| `i.dateSelect(msg, "date")`         | `date: "2024-01-15"`                      |
+| type          | Used for                         | value type                           |
+| ------------- | -------------------------------- | ------------------------------------ |
+| `String`      | `i.text`, `i.select`, `i.password`, `i.dateSelect` | string        |
+| `StringArray` | `i.checkbox`                     | list of strings                      |
+| `Bool`        | `i.confirm`                      | `true` or `false`                    |
 
 ### deterministic_state
 
-Maps `d.get()` keys to fixed values for deterministic test output:
+Maps `d.get(key, ...)` keys to fixed string values. All values are strings:
 
 | Code                                              | deterministic_state                            |
 | ------------------------------------------------- | ---------------------------------------------- |
 | `d.get("timestamp", () => Date.now().toString())` | `timestamp: "1234567890"`                      |
 | `d.get("uuid", () => crypto.randomUUID())`        | `uuid: "00000000-0000-0000-0000-000000000000"` |
 
+### expected
+
+Declares how to verify output. Uses `type: snapshot` with a directory path containing expected files:
+
+```yaml
+expected:
+  type: snapshot
+  value:
+    path: ./snapshots/test-name
+```
+
+The snapshot directory contains the full expected output tree. Updated with `--update-snapshots`.
+
 ### validate
 
-Shell commands executed in the generated output directory. Each must exit with code 0 to pass:
+Plain shell command strings executed in the generated output directory. Each must exit 0 to pass:
 
 ```yaml
 validate:
-  - command: 'test -f file.txt' # Check file exists
-    description: 'file.txt exists'
-  - command: 'test -d src' # Check directory exists
-    description: 'src directory exists'
-  - command: "grep -q 'text' file.txt" # Check file contents
-    description: 'file.txt contains expected text'
+  - test -f file.txt
+  - test -d src
+  - grep -q 'text' file.txt
 ```
 
-### snapshots
+## Directory Layout
 
-Directories or files to snapshot for comparison:
-
-```yaml
-snapshots:
-  - path: '.' # Snapshot entire output
-    name: 'full-output'
-  - path: 'src' # Snapshot just src directory
-    name: 'source-files'
 ```
-
-Snapshots are stored in `__snapshots__/` and updated with `cyanprint test template . --update-snapshots`.
+template-root/
+├── snapshots/
+│   ├── typescript-basic/
+│   │   ├── cyan/
+│   │   ├── cyan.yaml
+│   │   └── ... (full expected output)
+│   └── python-minimal/
+│       └── ... (full expected output)
+├── cyan/
+│   └── index.ts
+├── cyan.yaml
+└── test.cyan.yaml
+```
 
 ## Running Tests
 
 ```bash
 # Run all test cases
 cyanprint test template .
+
+# Run with verbose output
+cyanprint test template . --verbose
 
 # Update snapshots
 cyanprint test template . --update-snapshots

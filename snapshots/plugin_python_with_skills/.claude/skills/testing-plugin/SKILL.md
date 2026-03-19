@@ -1,6 +1,6 @@
 ---
 name: testing-plugin
-description: Test this CyanPrint plugin. Use when the user asks to write plugin tests, add test cases with input files and config, update snapshots, or debug plugin test failures. Covers test.cyan.yaml format with input files, config, expect (errors/warnings), and snapshots.
+description: Test this CyanPrint plugin. Use when the user asks to write plugin tests, add test cases, update snapshots, or debug plugin test failures. Covers test.cyan.yaml format with input directories, config, validate commands, and expected output.
 ---
 
 # Testing this Plugin
@@ -13,69 +13,70 @@ Read the entry point code (`cyan/index.ts` or equivalent) to find:
 - What the plugin does (validation, transformation, or both)
 - What files it reads or checks
 
-## Step 2: Write test.cyan.yaml
+## Step 2: Prepare input files (if needed)
+
+If the plugin needs input files to operate on, create an input directory:
+
+```
+inputs/
+└── with-readme/
+    ├── README.md
+    └── package.json
+```
+
+## Step 3: Write test.cyan.yaml
 
 Create a `test.cyan.yaml` file in the plugin root:
 
 ```yaml
-test_cases:
+tests:
   - name: 'validation-passes'
-    description: 'All validation checks pass'
-    input:
-      - path: 'README.md'
-        content: '# My Project'
-      - path: 'package.json'
-        content: '{"name": "test", "version": "1.0.0"}'
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/validation-passes
+    input: ./inputs/with-readme
     config:
-      # Key each entry to YOUR plugin's actual config keys from the entry point
       requireReadme: true
       requireLicense: false
-    expect:
-      errors: []
-      warnings: []
+    validate:
+      - test -f README.md
 ```
 
 ### input
 
-Define test input files that the plugin will receive in `input.directory`.
+Path to a directory containing input files the plugin receives. Omit if the plugin works on an empty directory.
+
+```yaml
+input: ./inputs/with-readme
+```
 
 ### config
 
 Keys must match the `input.config` keys your plugin actually reads. Extract them from the entry point code — do NOT invent fictional config keys.
 
-### expect
+### expected
 
-For **validation plugins**, define expected `errors` and `warnings`:
+Declares expected output using a snapshot path:
 
 ```yaml
-expect:
-  errors:
-    - path: 'README.md'
-      messageContains: 'required'
-  warnings: []
+expected:
+  type: snapshot
+  value:
+    path: ./snapshots/validation-passes
 ```
 
 ### validate
 
-Optional shell commands to run after plugin execution:
+Optional plain shell commands to run after plugin execution:
 
 ```yaml
 validate:
-  - command: 'test -f src/index.ts'
-    description: 'File exists after plugin run'
+  - test -f src/index.ts
+  - test $(wc -c < output.bin) -eq 16
 ```
 
-### snapshots
-
-For **transformation plugins**, declare expected output files:
-
-```yaml
-snapshots:
-  - path: 'src/index.ts'
-    name: 'transformed-output'
-```
-
-## Step 3: Run and iterate
+## Step 4: Run and iterate
 
 ```bash
 # Run all plugin tests
