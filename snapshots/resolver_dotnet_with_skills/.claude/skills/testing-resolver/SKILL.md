@@ -1,6 +1,6 @@
 ---
 name: testing-resolver
-description: Test this CyanPrint resolver. Use when the user asks to write resolver tests, add test cases with conflicting files, update snapshots, or debug resolver test failures. Covers test.cyan.yaml format with resolver_inputs (directory paths with origin), config, validate commands, and expected output.
+description: Test this CyanPrint resolver. Use when the user asks to write resolver tests, add test cases with conflicting files, update snapshots, or debug resolver test failures. Covers test.cyan.yaml format with resolver_inputs (directory paths with origin), config, and expected output.
 ---
 
 # Testing this Resolver
@@ -50,8 +50,6 @@ tests:
           layer: 1
     config:
       strategy: deep-merge
-    validate:
-      - test -f package.json
 ```
 
 ### resolver_inputs
@@ -87,16 +85,6 @@ expected:
   type: snapshot
   value:
     path: ./snapshots/merge-two-files
-```
-
-### validate
-
-Optional plain shell commands to verify the resolved output:
-
-```yaml
-validate:
-  - grep -q 'version: 2' config.yaml
-  - jq '.name' package.json | grep -q 'base-project'
 ```
 
 ## Step 4: Run and iterate
