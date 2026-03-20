@@ -1,11 +1,27 @@
-username: {{ username }}
-name: {{ name }}
-description: {{ desc }}
-project: {{ project }}
-source: {{ source }}
-email: {{ email }}
-tags: {{ tags }}
+username: {{username }}
+name: {{name }}
+description: {{desc }}
+project: {{project }}
+source: {{source }}
+email: {{email }}
+tags: {{tags }}
 readme: cyan/README.MD
 templates: []
-processors: {{ processors }}
-plugins: {{ plugins }}
+processors:
+  - cyan/default
+plugins: []
+resolvers: []
+build:
+  registry: ${DOMAIN:-docker.io}/${GITHUB_REPO_REF:-{{username }}}
+  platforms:
+    - linux/amd64
+    - linux/arm64
+  images:
+    template:
+      image: {{name }}
+      dockerfile: cyan/Dockerfile
+      context: ./cyan
+    blob:
+      image: {{name }}-blob
+      dockerfile: cyan/blob.Dockerfile
+      context: .

@@ -8,6 +8,21 @@ flake.nix
 Taskfile.yaml
 README.MD
 
+# Dev/test artifacts
+snapshots/
+spec/
+.kagent/
+.claude/
+.cyan_output/
+.cyan_state.yaml
+test.cyan.yaml
+CLAUDE.md
+docs/
+Changelog.md
+atomi_release.yaml
+.gitlint
+.prettierrc.yaml
+
 **/node_modules/**
 .git
 .idea
@@ -20,4 +35,5 @@ README.MD
 **/obj/
 **/node_modules/
 **/env.
+**/*.lockb
 

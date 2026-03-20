@@ -10,7 +10,7 @@ This is a CyanPrint meta-template repository for creating CyanPrint templates, p
 
 ### Build and Development
 
-- `task build` - Builds and publishes the template (requires environment variables)
+- `pls build` - Builds and publishes the template (requires environment variables). `pls` is the official alias for `task` (Taskfile runner).
 - `nix develop` - Enter development shell with all dependencies
 - `nix fmt` - Format all code using treefmt
 - `nix run .#pre-commit-check` - Run pre-commit checks
@@ -108,4 +108,4 @@ Must set these environment variables for builds:
 2. Modify template sources in respective language directories
 3. Test with `cyanprint create cyan/new <test-folder>`
 4. Run pre-commit checks before committing
-5. Use `task build` for publishing (CI/CD context)
+5. Use `pls build` for publishing (CI/CD context)

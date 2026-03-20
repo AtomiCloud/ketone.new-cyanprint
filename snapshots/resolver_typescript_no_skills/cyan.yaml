@@ -1,0 +1,18 @@
+username: testuser
+name: test-resolver
+description: A test resolver
+project: https://github.com/test/test
+source: https://github.com/test/test
+email: test@example.com
+tags: []
+readme: README.MD
+build:
+  registry: ${DOMAIN:-docker.io}/${GITHUB_REPO_REF:-testuser}
+  platforms:
+    - linux/amd64
+    - linux/arm64
+  images:
+    resolver:
+      image: test-resolver
+      dockerfile: Dockerfile
+      context: .

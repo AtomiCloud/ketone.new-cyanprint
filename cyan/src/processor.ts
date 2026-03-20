@@ -1,50 +1,62 @@
-import { type Cyan, type CyanGlob, GlobType, type IInquirer } from "@atomicloud/cyan-sdk";
+import { type Cyan, type CyanGlob, GlobType, type IInquirer } from '@atomicloud/cyan-sdk';
 
 export async function PromptProcessor(
   inquirer: IInquirer,
   langType: string,
   vars: any,
+  includeSkills: string,
 ): Promise<Cyan> {
   const glob = (() => {
-    if (langType == "Typescript") {
+    if (langType == 'Typescript') {
       return TypescriptValues();
-    } else if (langType == "C#") {
+    } else if (langType == 'C#') {
       return CSharpValues();
-    } else if (langType == "Python") {
+    } else if (langType == 'Python') {
       return PythonValues();
-    } else if (langType == "Javascript") {
+    } else if (langType == 'Javascript') {
       return JavascriptValues();
     } else {
-      throw new Error("Invalid language type");
+      throw new Error('Invalid language type');
     }
   })();
+
+  const skillsGlobs: CyanGlob[] =
+    includeSkills === 'yes'
+      ? [
+          {
+            root: 'processor/skills',
+            exclude: [],
+            glob: '**/*',
+            type: GlobType.Copy,
+          },
+        ]
+      : [];
 
   return {
     processors: [
       {
-        name: "cyan/default",
+        name: 'cyan/default',
         files: [
           ...glob,
           {
-            root: "processor/common",
+            root: 'processor/common',
             exclude: [],
-            glob: "**/*",
+            glob: '**/*',
             type: GlobType.Copy,
           },
           {
-            root: "processor",
+            root: 'processor',
             exclude: [],
-            glob: "cyan.yaml",
+            glob: 'cyan.yaml',
             type: GlobType.Template,
           },
+          ...skillsGlobs,
         ],
         config: {
           vars,
           parser: {
-            varSyntax: [
-              ["{{", "}}"],
-            ]
-          }
+            varSyntax: [['{{', '}}']],
+          },
         },
       },
     ],
@@ -55,8 +67,8 @@ export async function PromptProcessor(
 function CSharpValues(): CyanGlob[] {
   return [
     {
-      root: "processor/dotnet",
-      glob: "**/*",
+      root: 'processor/dotnet',
+      glob: '**/*',
       type: GlobType.Template,
       exclude: [],
     },
@@ -66,8 +78,8 @@ function CSharpValues(): CyanGlob[] {
 function PythonValues(): CyanGlob[] {
   return [
     {
-      root: "processor/python",
-      glob: "**/*",
+      root: 'processor/python',
+      glob: '**/*',
       type: GlobType.Template,
       exclude: [],
     },
@@ -77,8 +89,8 @@ function PythonValues(): CyanGlob[] {
 function JavascriptValues(): CyanGlob[] {
   return [
     {
-      root: "processor/javascript",
-      glob: "**/*",
+      root: 'processor/javascript',
+      glob: '**/*',
       type: GlobType.Template,
       exclude: [],
     },
@@ -88,8 +100,8 @@ function JavascriptValues(): CyanGlob[] {
 function TypescriptValues(): CyanGlob[] {
   return [
     {
-      root: "processor/typescript",
-      glob: "**/*",
+      root: 'processor/typescript',
+      glob: '**/*',
       type: GlobType.Template,
       exclude: [],
     },
