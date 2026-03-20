@@ -163,7 +163,21 @@ var name = d.Get("project-name", () => i.Text("Project name?", "project-name"));
 
 In tests, `deterministic_state` provides values directly. In interactive mode, the fallback function runs.
 
+### Why Determinism Matters
+
+Each template script is executed multiple times — during generation, testing, and re-generation. Without `d.get()`, values from `DateTime.Now`, `Random`, or other non-deterministic sources produce different output each time, breaking snapshot tests.
+
+`d.get()` solves this by generating a random value on first execution and storing it. Subsequent executions return the stored value instead of generating a new one. This is why ALL prompt values should go through `d.get()`, not just the obviously random ones.
+
 ## Configuring the Default Processor
+
+The default processor (`cyan/default`) supports these config options:
+
+- `vars`: Template variables for substitution. Supports nested objects. These are substituted using the configured syntax.
+- `flags`: Boolean flag variables. Supports nested objects. Useful for conditional template logic.
+- `parser.varSyntax`: Custom delimiter pairs. Default is `{{` and `}}`. Pass as array of 2-element arrays, e.g., `[['{{', '}}']]`.
+
+**Note**: Globbing is handled automatically by the processor via `fileHelper.resolveAll()`. You don't need to implement file matching yourself.
 
 ```csharp
 new Cyan
@@ -193,7 +207,8 @@ new Cyan
             Config = new
             {
                 vars = new { username, name = projectName, description = projectDesc },
-                varSyntax = new[] { new[] { "{{", "}}" } }, // Optional: customize delimiters
+                flags = new { includeTests = true, enableAuth = false },
+                parser = new { varSyntax = new[] { new[] { "{{", "}}" } } },
             },
         },
     },
@@ -217,6 +232,17 @@ new Cyan
     },
 }
 ```
+
+## Finding Processors, Plugins, and Resolvers
+
+Browse available artifacts:
+- **Registry**: https://cyanprint.dev/registry
+- **API**: `https://api.zinc.sulfone.raichu.cluster.atomi.cloud/api/v1/`
+
+API endpoints:
+- Processors: `/api/v1/Processor`
+- Plugins: `/api/v1/Plugin`
+- Resolvers: `/api/v1/Resolver`
 
 ## Type Definitions
 

@@ -19,8 +19,7 @@ Read the entry point code (`cyan/index.ts` or equivalent for other languages) to
 
 - All prompt IDs — the `id` parameter in every `i.text(...)`, `i.select(...)`, `i.checkbox(...)`, `i.confirm(...)`, `i.password(...)`, `i.dateSelect(...)` call
 - The description/message text for each prompt
-- What processors and plugins are declared in the return value
-- What variables are configured in processor configs
+- What processors, plugins, and resolvers are declared in the return value — include their names and configs
 
 ## Step 2: Generate README.MD
 
@@ -31,10 +30,9 @@ The README must include:
 1. **Title** — the template name from `cyan.yaml`
 2. **Description** — from `cyan.yaml`
 3. **Usage** — `cyanprint create {username}/{name}` with a `cyan.yaml` snippet
-4. **Prompts** — a table of every prompt ID, its description, and its type (text/select/checkbox/confirm/password/dateSelect)
-5. **Answer State Automation** — example `answer_state` keyed to the actual prompt IDs
-6. **Variable Syntax** — `{{var}}` with processor vars documented
-7. **Dependencies** — language runtime, SDK packages
+4. **Prompts** — a table of every prompt ID, its description, and its type. Additionally, generate a Mermaid flowchart showing the deterministic question flow tree based on control flow analysis of the script (if/else branches from i.confirm, i.select, etc.)
+5. **Dependencies** — a table with: name, version (from cyan.yaml, package.json, or similar), purpose (what it does), and usage (how the template uses it). Include: language runtime, SDK packages, and all referenced processors/plugins/resolvers
+6. **Build and Publish** — build section from cyan.yaml, push command
 
 ## Step 3: Write README.MD
 

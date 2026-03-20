@@ -137,6 +137,9 @@ using sulfone_helium;
 ResolverOutput ResolverFn(ResolverInput input)
 {
     var files = input.Files;
+    if (files.Count == 0) throw new Exception("Resolver received no files — at least 1 file is required");
+    var uniquePaths = files.Select(f => f.Path).Distinct().ToList();
+    if (uniquePaths.Count > 1) throw new Exception($"Resolver received files with different paths: {string.Join(", ", uniquePaths)} — all files must have the same path");
     var path = files[0].Path;
 
     // Sort for commutativity (layer ascending, then template name)
@@ -161,3 +164,4 @@ CyanEngine.StartResolver(ResolverFn);
 3. **Return a single `new ResolverOutput { Path = ..., Content = ... }`** -- the resolved file
 4. **Ensure commutativity** -- sort inputs before processing, deduplicate outputs
 5. **Ensure associativity** -- result must be same whether resolved all-at-once or in pairs
+6. **Validate input** -- reject empty files list and mismatched paths with an error

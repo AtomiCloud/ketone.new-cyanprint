@@ -111,6 +111,11 @@ from cyanprintsdk import start_resolver_with_fn
 def resolver_fn(input):
     config = input.config
     files = input.files
+    if len(files) == 0:
+        raise ValueError("Resolver received no files — at least 1 file is required")
+    unique_paths = set(f["path"] for f in files)
+    if len(unique_paths) > 1:
+        raise ValueError(f"Resolver received files with different paths: {', '.join(unique_paths)} — all files must have the same path")
     path = files[0].path
 
     # Sort for commutativity (layer ascending, then template name)
@@ -131,3 +136,4 @@ start_resolver_with_fn(resolver_fn)
 3. **Return a single `{"path": ..., "content": ...}`** -- the resolved file
 4. **Ensure commutativity** -- sort inputs before processing, deduplicate outputs
 5. **Ensure associativity** -- result must be same whether resolved all-at-once or in pairs
+6. **Validate input** -- reject empty files list and mismatched paths with an error

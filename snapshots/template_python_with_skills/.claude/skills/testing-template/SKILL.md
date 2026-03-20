@@ -79,7 +79,7 @@ expected:
 
 ### validate
 
-Optional shell commands (plain strings) that run after template generation:
+Optional shell commands that run serially after template generation. Each command must exit zero — if any command fails, the test fails. Use these to verify the generated scaffold is complete and functional (e.g., checking that `npm install` succeeds, the dev server starts, or the build completes):
 
 ```yaml
 validate:
@@ -93,9 +93,6 @@ validate:
 ```bash
 # Run all template tests
 cyanprint test template .
-
-# Run with verbose output
-cyanprint test template . --verbose
 
 # Update snapshots after intentional changes
 cyanprint test template . --update-snapshots

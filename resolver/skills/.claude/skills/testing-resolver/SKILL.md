@@ -105,9 +105,6 @@ validate:
 # Run all resolver tests
 cyanprint test resolver .
 
-# Run with verbose output
-cyanprint test resolver . --verbose
-
 # Update snapshots after intentional changes
 cyanprint test resolver . --update-snapshots
 ```
@@ -115,6 +112,8 @@ cyanprint test resolver . --update-snapshots
 ## Commutativity Testing
 
 Always include tests that verify the resolver produces the same output regardless of input order:
+
+**Note**: There is no official commutativity checker. You must manually verify commutativity by writing tests with swapped input order that snapshot to the same output directory:
 
 ```yaml
 tests:

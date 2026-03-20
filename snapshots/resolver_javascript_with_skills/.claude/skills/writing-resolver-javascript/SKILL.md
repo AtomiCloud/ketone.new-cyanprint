@@ -106,6 +106,9 @@ const { StartResolverWithLambda } = require('@atomicloud/cyan-sdk');
 
 StartResolverWithLambda(async input => {
   const { config, files } = input;
+  if (files.length === 0) throw new Error('Resolver received no files — at least 1 file is required');
+  const uniquePaths = new Set(files.map(f => f.path));
+  if (uniquePaths.size > 1) throw new Error(`Resolver received files with different paths: ${[...uniquePaths].join(', ')} — all files must have the same path`);
   const path = files[0].path;
 
   // Sort for commutativity (layer ascending, then template name)
@@ -128,3 +131,4 @@ StartResolverWithLambda(async input => {
 3. **Return a single `{ path, content }`** -- the resolved file
 4. **Ensure commutativity** -- sort inputs before processing, deduplicate outputs
 5. **Ensure associativity** -- result must be same whether resolved all-at-once or in pairs
+6. **Validate input** -- reject empty files list and mismatched paths with an error
