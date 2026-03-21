@@ -32,27 +32,6 @@ Describe how the resolver decides the final content when multiple files conflict
 - How ties are broken
 - What happens with empty or missing content
 
-## Origin Handling
-
-The resolver receives `FileOrigin` for each conflicting file:
-
-```typescript
-interface FileOrigin {
-  template: string; // Name of the template that produced this file
-  layer: number; // Layer number (numeric priority indicator)
-}
-```
-
-{origin-handling}
-
-Describe how the resolver uses `template` and `layer` fields:
-
-- Does higher `layer` number mean higher priority or lower?
-- Does template name affect ordering?
-- How are files from the same template but different layers handled?
-
-**Important**: `layer` is a `number`, not a string. Resolvers should compare layers numerically.
-
 ## Commutativity and Associativity
 
 CyanPrint may invoke the resolver with files in any order. The resolver must produce identical output regardless of input ordering. This resolver ensures commutativity by:
@@ -94,8 +73,7 @@ Reference this resolver in a template's `cyan.yaml`:
 
 ```yaml
 resolvers:
-  - name: { artifact-name }
-    config: { integration-example }
+  - resolver: username/resolver-name:version
+    config: {}
+    files: ['**/*.json']
 ```
-
-{integration-example}

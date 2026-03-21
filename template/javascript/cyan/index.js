@@ -21,7 +21,11 @@ StartTemplateWithLambda(async (i, d) => {
         config: {
           vars: { projectName: name, projectDescription: description },
           parser: {
-            varSyntax: [[open, close], ['// ' + open, close], ['# ' + open, close]],
+            varSyntax: [
+              [open, close],
+              ['// ' + open, close],
+              ['# ' + open, close],
+            ],
           },
         },
       },

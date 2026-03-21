@@ -44,6 +44,7 @@ Layer 2: Generated artifact (e.g., a CyanPrint template)
 ## Test Case Naming Convention
 
 Tests are named `{artifact}_{language}_{skills}`:
+
 - `template_typescript_no_skills`, `plugin_python_with_skills`, etc.
 - 4 artifacts × 4 languages × 2 skill variants = 32 test cases
 
@@ -61,12 +62,12 @@ cyanprint test template --test <test_name> .
 
 Read the output and determine which type of failure:
 
-| Failure Type | Symptom | What to Check |
-|---|---|---|
-| **Snapshot mismatch** | `File '<path>' mismatched` or `Extra file`/`Missing file` | Layer 1 — source template generates different output than expected |
-| **Nested validate fail** | `Command '...cyanprint test <artifact> ...' failed` | Layer 2 — the generated artifact's own test fails |
-| **Processor version error** | `processor <name> does not have a matching version defined` | `cyan.yaml` missing processor/plugin/resolver declaration |
-| **Missing output file** | `Missing file: <path>` in nested test | Generated artifact's entry point doesn't produce expected output |
+| Failure Type                | Symptom                                                     | What to Check                                                      |
+| --------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------ |
+| **Snapshot mismatch**       | `File '<path>' mismatched` or `Extra file`/`Missing file`   | Layer 1 — source template generates different output than expected |
+| **Nested validate fail**    | `Command '...cyanprint test <artifact> ...' failed`         | Layer 2 — the generated artifact's own test fails                  |
+| **Processor version error** | `processor <name> does not have a matching version defined` | `cyan.yaml` missing processor/plugin/resolver declaration          |
+| **Missing output file**     | `Missing file: <path>` in nested test                       | Generated artifact's entry point doesn't produce expected output   |
 
 ### Step 3: Fix snapshot mismatches (Layer 1)
 
@@ -77,6 +78,7 @@ cyanprint test template --test <test_name> --update-snapshots .
 ```
 
 Then verify without the flag:
+
 ```bash
 cyanprint test template --test <test_name> .
 ```
@@ -120,7 +122,7 @@ If the generated artifact's own test fails, you need to understand what the gene
    - `template/javascript/cyan/`
    - `template/python/cyan/`
    - `template/dotnet/cyan/`
-   And/or common files:
+     And/or common files:
    - `template/common/`
    - `template/cyan.yaml`
 
@@ -143,6 +145,7 @@ cyanprint test template .
 Source files under `template/{language}/` are processed with `GlobType.Template` — the meta-template substitutes `{{var}}` patterns. If the generated code needs **literal** `{{` and `}}` characters (e.g., for varSyntax config), they will be consumed by the meta-template's processor.
 
 **Fix:** Construct braces at runtime:
+
 ```typescript
 // In template/{language}/cyan/index.ts
 const open = '{' + '{';
@@ -163,6 +166,7 @@ The meta-template's processor vars are: `project`, `source`, `username`, `name`,
 When a generated artifact's entry point returns a processor/plugin/resolver by name (e.g., `cyan/default`), that name **must** be declared in the artifact's `cyan.yaml`.
 
 **Fix:** Add it to `template/cyan.yaml`:
+
 ```yaml
 processors:
   - cyan/default
@@ -182,31 +186,31 @@ Running `cyanprint test template` inside a parent `cyanprint test template` can 
 
 ### Source templates → Generated artifact paths
 
-| Source | Generated Path | GlobType |
-|---|---|---|
-| `template/{lang}/cyan/**/*` | `cyan/**/*` | Template |
-| `template/common/**/*` | (root) | Copy |
-| `template/cyan.yaml` | `cyan.yaml` | Template |
-| `template/skills/**/*` | `.claude/skills/**/*` | Copy (if skills=yes) |
+| Source                      | Generated Path        | GlobType             |
+| --------------------------- | --------------------- | -------------------- |
+| `template/{lang}/cyan/**/*` | `cyan/**/*`           | Template             |
+| `template/common/**/*`      | (root)                | Copy                 |
+| `template/cyan.yaml`        | `cyan.yaml`           | Template             |
+| `template/skills/**/*`      | `.claude/skills/**/*` | Copy (if skills=yes) |
 
 ### Test config sources
 
-| Source | Used By |
-|---|---|
-| `test.cyan.yaml` (root) | Meta-template tests (Layer 1) |
-| `template/common/test.cyan.yaml` | Generated template tests (Layer 2) |
-| `plugin/common/test.cyan.yaml` | Generated plugin tests (Layer 2) |
+| Source                            | Used By                             |
+| --------------------------------- | ----------------------------------- |
+| `test.cyan.yaml` (root)           | Meta-template tests (Layer 1)       |
+| `template/common/test.cyan.yaml`  | Generated template tests (Layer 2)  |
+| `plugin/common/test.cyan.yaml`    | Generated plugin tests (Layer 2)    |
 | `processor/common/test.cyan.yaml` | Generated processor tests (Layer 2) |
-| `resolver/common/test.cyan.yaml` | Generated resolver tests (Layer 2) |
+| `resolver/common/test.cyan.yaml`  | Generated resolver tests (Layer 2)  |
 
 ### Entry point source files
 
-| Language | Source | Generated |
-|---|---|---|
+| Language   | Source                              | Generated       |
+| ---------- | ----------------------------------- | --------------- |
 | TypeScript | `template/typescript/cyan/index.ts` | `cyan/index.ts` |
 | JavaScript | `template/javascript/cyan/index.js` | `cyan/index.js` |
-| Python | `template/python/cyan/main.py` | `main.py` |
-| .NET | `template/dotnet/cyan/Program.cs` | `Program.cs` |
+| Python     | `template/python/cyan/main.py`      | `main.py`       |
+| .NET       | `template/dotnet/cyan/Program.cs`   | `Program.cs`    |
 
 ## Quick Reference Commands
 

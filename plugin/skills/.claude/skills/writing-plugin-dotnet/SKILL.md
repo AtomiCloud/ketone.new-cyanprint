@@ -1,7 +1,6 @@
 ---
 name: writing-plugin-dotnet
 description: Write or modify CyanPrint plugin code in C#. Use when the user asks to add validation rules, change plugin behavior, modify the entry point, run commands from a plugin, or mutate files. Covers entry point (CyanEngine.StartPlugin), native filesystem I/O (System.IO), and command execution (System.Diagnostics.Process). Plugins receive { Directory, Config } and use native OS operations.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Writing this Plugin (C#)

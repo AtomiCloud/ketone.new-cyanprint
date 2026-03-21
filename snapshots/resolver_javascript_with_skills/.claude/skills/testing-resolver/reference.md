@@ -162,8 +162,8 @@ Both tests snapshot to the same `commutative-merge-result` directory.
 
 ```yaml
 origin:
-  template: template-name   # string: which template produced this file
-  layer: 0                  # number: layer number (numeric priority)
+  template: template-name # string: which template produced this file
+  layer: 0 # number: layer number (numeric priority)
 ```
 
 ### config

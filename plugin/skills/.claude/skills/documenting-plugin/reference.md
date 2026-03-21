@@ -41,10 +41,7 @@ This plugin operates as a **{validation|transformation}** plugin. It receives th
 Reference this plugin in your template's `cyan.yaml`:
 
 ```yaml
-plugins:
-  - name: { artifact-name }
-    config:
-      { config-key }: { example-value }
+plugins: [username/plugin-name:version]
 ```
 
 ## Requirements

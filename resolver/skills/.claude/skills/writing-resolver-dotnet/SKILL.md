@@ -1,7 +1,6 @@
 ---
 name: writing-resolver-dotnet
 description: Write or modify CyanPrint resolver code in C#. Use when the user asks to change conflict resolution logic, modify merge strategies, handle file origins, or change resolution behavior. Covers entry point (CyanEngine.StartResolver), ResolverInput/ResolverOutput, ResolvedFile, and FileOrigin. Must ensure commutativity and associativity (sort, unique, deterministic ordering).
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Writing this Resolver (C# / .NET)

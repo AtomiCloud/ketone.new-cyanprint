@@ -220,10 +220,12 @@ Cyan(
 ## Finding Processors, Plugins, and Resolvers
 
 Browse available artifacts:
+
 - **Registry**: https://cyanprint.dev/registry
 - **API**: `https://api.zinc.sulfone.raichu.cluster.atomi.cloud/api/v1/`
 
 API endpoints:
+
 - Processors: `/api/v1/Processor`
 - Plugins: `/api/v1/Plugin`
 - Resolvers: `/api/v1/Resolver`

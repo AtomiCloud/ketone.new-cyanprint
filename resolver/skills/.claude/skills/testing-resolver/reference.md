@@ -20,8 +20,6 @@ tests:
           layer: 1
     config:
       strategy: deep-merge
-    validate:
-      - test -f resolved-file.json
 ```
 
 ## Complete Examples
@@ -58,9 +56,6 @@ tests:
       preserveKeys:
         - name
         - version
-    validate:
-      - jq '.name' package.json | grep -q 'base-project'
-      - jq '.dependencies | keys | length' package.json | grep -q '2'
 ```
 
 ### Priority by Layer
@@ -162,8 +157,8 @@ Both tests snapshot to the same `commutative-merge-result` directory.
 
 ```yaml
 origin:
-  template: template-name   # string: which template produced this file
-  layer: 0                  # number: layer number (numeric priority)
+  template: template-name # string: which template produced this file
+  layer: 0 # number: layer number (numeric priority)
 ```
 
 ### config
@@ -179,16 +174,6 @@ expected:
   type: snapshot
   value:
     path: ./snapshots/test-case-name
-```
-
-### validate
-
-Optional plain shell commands run against the resolved output:
-
-```yaml
-validate:
-  - jq '.key' file.json | grep -q 'expected'
-  - test -f resolved-file
 ```
 
 ## Directory Layout
@@ -225,7 +210,4 @@ cyanprint test resolver .
 
 # Update snapshots
 cyanprint test resolver . --update-snapshots
-
-# Verbose output
-cyanprint test resolver . --verbose
 ```

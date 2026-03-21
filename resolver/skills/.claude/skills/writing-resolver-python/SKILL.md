@@ -1,7 +1,6 @@
 ---
 name: writing-resolver-python
 description: Write or modify CyanPrint resolver code in Python. Use when the user asks to change conflict resolution logic, modify merge strategies, handle file origins, or change resolution behavior. Covers entry point (start_resolver_with_fn), ResolverInput/ResolverOutput, ResolvedFile, and FileOrigin. Must ensure commutativity and associativity (sort, unique, deterministic ordering).
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Writing this Resolver (Python)

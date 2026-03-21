@@ -118,7 +118,10 @@ StartResolverWithLambda(async (input: ResolverInput): Promise<ResolverOutput> =>
   const { config, files } = input;
   if (files.length === 0) throw new Error('Resolver received no files — at least 1 file is required');
   const uniquePaths = new Set(files.map(f => f.path));
-  if (uniquePaths.size > 1) throw new Error(`Resolver received files with different paths: ${[...uniquePaths].join(', ')} — all files must have the same path`);
+  if (uniquePaths.size > 1)
+    throw new Error(
+      `Resolver received files with different paths: ${[...uniquePaths].join(', ')} — all files must have the same path`,
+    );
   // All files have the same path -- resolve the conflict
   const path = files[0].path;
 

@@ -1,7 +1,6 @@
 ---
 name: writing-template-javascript
 description: Write or modify CyanPrint template code in JavaScript. Use when the user asks to add prompts, change template logic, modify the entry point, add processors/plugins/resolvers, or change generated output for a JavaScript template. Covers IInquirer question types (text, select, checkbox, confirm, password, dateSelect), processor configuration, and IDeterminism.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Writing this Template (JavaScript)
@@ -221,10 +220,12 @@ The default processor (`cyan/default`) supports these config options:
 ## Finding Processors, Plugins, and Resolvers
 
 Browse available artifacts:
+
 - **Registry**: https://cyanprint.dev/registry
 - **API**: `https://api.zinc.sulfone.raichu.cluster.atomi.cloud/api/v1/`
 
 API endpoints:
+
 - Processors: `/api/v1/Processor`
 - Plugins: `/api/v1/Plugin`
 - Resolvers: `/api/v1/Resolver`

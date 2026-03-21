@@ -18,13 +18,13 @@ tests:
 
 ### Field reference
 
-| Field     | Type          | Required | Description                                                      |
-| --------- | ------------- | -------- | ---------------------------------------------------------------- |
-| `name`    | string        | yes      | Unique test case identifier                                      |
-| `expected`| object        | yes      | `{ type: snapshot, value: { path } }` — snapshot directory path  |
-| `input`   | string        | no       | Path to input directory for the plugin                           |
-| `config`  | object        | no       | Plugin configuration (must match actual config keys from entry)  |
-| `validate`| list[string]  | no       | Shell commands to run after plugin execution (plain strings)     |
+| Field      | Type         | Required | Description                                                     |
+| ---------- | ------------ | -------- | --------------------------------------------------------------- |
+| `name`     | string       | yes      | Unique test case identifier                                     |
+| `expected` | object       | yes      | `{ type: snapshot, value: { path } }` — snapshot directory path |
+| `input`    | string       | no       | Path to input directory for the plugin                          |
+| `config`   | object       | no       | Plugin configuration (must match actual config keys from entry) |
+| `validate` | list[string] | no       | Shell commands to run after plugin execution (plain strings)    |
 
 ## Complete Example: Validation Plugin
 
@@ -148,9 +148,6 @@ plugin-root/
 ```bash
 # Run all tests
 cyanprint test plugin .
-
-# Run with verbose output
-cyanprint test plugin . --verbose
 
 # Update snapshots after verifying output is correct
 cyanprint test plugin . --update-snapshots

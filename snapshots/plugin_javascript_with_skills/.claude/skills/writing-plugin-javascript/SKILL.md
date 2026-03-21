@@ -13,7 +13,7 @@ Plugins use `StartPluginWithLambda` with a **single parameter** — the input ob
 ```javascript
 const { StartPluginWithLambda } = require('@atomicloud/cyan-sdk');
 
-StartPluginWithLambda(async (input) => {
+StartPluginWithLambda(async input => {
   // Plugin logic here
   return { directory: input.directory };
 });

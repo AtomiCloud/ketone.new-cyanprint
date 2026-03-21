@@ -45,14 +45,14 @@ tests:
 
 Keys are `{registry-path}/{prompt-id}`. The value is an object with `type` and `value`:
 
-| IInquirer Call                      | type           | value example                    |
-| ----------------------------------- | -------------- | -------------------------------- |
-| `i.text(msg, "name")`               | `String`       | `"my-project"`                   |
-| `i.select(msg, "lang", opts)`       | `String`       | `"TypeScript"`                   |
-| `i.checkbox(msg, "features", opts)` | `StringArray`  | `["docker", "ci"]`               |
-| `i.confirm(msg, "use_docker")`      | `Bool`         | `true` or `false`                |
-| `i.password(msg, "token")`          | `String`       | `"secret"`                       |
-| `i.dateSelect(msg, "date")`         | `String`       | `"2024-01-15"`                   |
+| IInquirer Call                      | type          | value example      |
+| ----------------------------------- | ------------- | ------------------ |
+| `i.text(msg, "name")`               | `String`      | `"my-project"`     |
+| `i.select(msg, "lang", opts)`       | `String`      | `"TypeScript"`     |
+| `i.checkbox(msg, "features", opts)` | `StringArray` | `["docker", "ci"]` |
+| `i.confirm(msg, "use_docker")`      | `Bool`        | `true` or `false`  |
+| `i.password(msg, "token")`          | `String`      | `"secret"`         |
+| `i.dateSelect(msg, "date")`         | `String`      | `"2024-01-15"`     |
 
 The `{registry-path}` prefix matches the template's full name (organization/template-name). Extract prompt IDs from the actual entry point code — do NOT use fictional keys.
 

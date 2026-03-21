@@ -108,14 +108,14 @@ processor-root/
 
 ## Field Reference
 
-| Field     | Type            | Required | Description                                                      |
-| --------- | --------------- | -------- | ---------------------------------------------------------------- |
-| `name`    | string          | yes      | Unique test case identifier                                      |
-| `expected`| object          | yes      | `{ type: snapshot, value: { path } }` — snapshot directory path  |
-| `input`   | string          | yes      | Path to input directory for the processor                        |
-| `config`  | object          | no       | Processor configuration (must match entry point config keys)     |
-| `globs`   | list[object]    | no       | Override glob patterns: `{ pattern, type }`                      |
-| `validate`| list[string]    | no       | Shell commands to verify output (plain strings)                  |
+| Field      | Type         | Required | Description                                                     |
+| ---------- | ------------ | -------- | --------------------------------------------------------------- |
+| `name`     | string       | yes      | Unique test case identifier                                     |
+| `expected` | object       | yes      | `{ type: snapshot, value: { path } }` — snapshot directory path |
+| `input`    | string       | yes      | Path to input directory for the processor                       |
+| `config`   | object       | no       | Processor configuration (must match entry point config keys)    |
+| `globs`    | list[object] | no       | Override glob patterns: `{ pattern, type }`                     |
+| `validate` | list[string] | no       | Shell commands to verify output (plain strings)                 |
 
 ## Running Tests
 

@@ -1,7 +1,6 @@
 ---
 name: writing-template-dotnet
 description: Write or modify CyanPrint template code in C#. Use when the user asks to add prompts, change template logic, modify the entry point, add processors/plugins/resolvers, or change generated output for a C#/.NET template. Covers IInquirer question types (Text, Select, Checkbox, Confirm, Password, DateSelect), processor configuration, and IDeterminism.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Writing this Template (C#)
@@ -236,10 +235,12 @@ new Cyan
 ## Finding Processors, Plugins, and Resolvers
 
 Browse available artifacts:
+
 - **Registry**: https://cyanprint.dev/registry
 - **API**: `https://api.zinc.sulfone.raichu.cluster.atomi.cloud/api/v1/`
 
 API endpoints:
+
 - Processors: `/api/v1/Processor`
 - Plugins: `/api/v1/Plugin`
 - Resolvers: `/api/v1/Resolver`

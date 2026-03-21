@@ -82,9 +82,6 @@ validate:
 # Run all plugin tests
 cyanprint test plugin .
 
-# Run with verbose output
-cyanprint test plugin . --verbose
-
 # Update snapshots after intentional changes
 cyanprint test plugin . --update-snapshots
 ```

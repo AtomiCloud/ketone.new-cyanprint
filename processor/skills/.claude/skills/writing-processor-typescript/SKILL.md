@@ -1,7 +1,6 @@
 ---
 name: writing-processor-typescript
 description: Write or modify CyanPrint processor code in TypeScript. Use when the user asks to change file transformations, modify the entry point, handle file processing, or change output generation. Covers entry point (StartProcessorWithLambda), CyanFileHelper (read/write/copy/resolveAll), and VirtualFile (content/read/write). Processor lambda receives (input, fileHelper) as two parameters.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Writing this Processor (TypeScript)
@@ -41,11 +40,17 @@ The `fileHelper` parameter is the primary interface for working with files:
 
 ### resolveAll() -- Start Here
 
-Call `fileHelper.resolveAll()` first. It reads all Template globs and copies all Copy globs:
+Call `fileHelper.resolveAll()` first. It automatically handles **all glob types**:
+
+- `GlobType.Template` globs: reads files and returns them as `VirtualFile[]` for transformation
+- `GlobType.Copy` globs: automatically copies files to the write directory
+
+**You do NOT need to manually check glob type or call `copy()` yourself.** The processor author does NOT manually check glob type — `resolveAll()` handles both cases:
 
 ```typescript
 const files = fileHelper.resolveAll();
 // files: VirtualFile[] -- all files available for transformation
+// Copy globs are already handled; Template globs are returned for processing
 ```
 
 ### read(glob) -- Read Specific Files
@@ -63,16 +68,6 @@ const refs = fileHelper.get(input.globs[0]);
 for (const ref of refs) {
   const file = ref.readFile();
   // file: VirtualFile
-}
-```
-
-### copy(glob) -- Copy Files As-Is
-
-```typescript
-for (const glob of input.globs) {
-  if (glob.type === GlobType.Copy) {
-    fileHelper.copy(glob);
-  }
 }
 ```
 
@@ -127,6 +122,21 @@ for (const ref of refs) {
     const data = JSON.parse(file.content);
     data.generated = true;
     file.content = JSON.stringify(data, null, 2);
+    file.writeFile();
+  }
+}
+```
+
+### Example: Rename Files via `file.relative` Mutation
+
+To change the output filename, mutate `file.relative` before calling `writeFile()`:
+
+```typescript
+const files = fileHelper.resolveAll();
+for (const file of files) {
+  if (file.relative.startsWith('src/')) {
+    // Rename: strip 'src/' prefix -> 'lib/'
+    file.relative = 'lib/' + file.relative.slice(4);
     file.writeFile();
   }
 }

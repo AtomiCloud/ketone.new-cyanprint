@@ -101,11 +101,11 @@ tests:
 
 Maps `{registry-path}/{prompt-id}` to answer objects. The `type` must match the IInquirer call:
 
-| type          | Used for                         | value type                           |
-| ------------- | -------------------------------- | ------------------------------------ |
-| `String`      | `i.text`, `i.select`, `i.password`, `i.dateSelect` | string        |
-| `StringArray` | `i.checkbox`                     | list of strings                      |
-| `Bool`        | `i.confirm`                      | `true` or `false`                    |
+| type          | Used for                                           | value type        |
+| ------------- | -------------------------------------------------- | ----------------- |
+| `String`      | `i.text`, `i.select`, `i.password`, `i.dateSelect` | string            |
+| `StringArray` | `i.checkbox`                                       | list of strings   |
+| `Bool`        | `i.confirm`                                        | `true` or `false` |
 
 ### deterministic_state
 
@@ -162,9 +162,6 @@ template-root/
 ```bash
 # Run all test cases
 cyanprint test template .
-
-# Run with verbose output
-cyanprint test template . --verbose
 
 # Update snapshots
 cyanprint test template . --update-snapshots
