@@ -18,6 +18,4 @@ LABEL cyanprint.dev=true
 ENV ASPNETCORE_URLS=http://+:5551
 WORKDIR /app
 COPY --from=publish /app/publish .
-RUN chown -R app:app /app
-USER app
 ENTRYPOINT ["dotnet", "Processor.dll"]
