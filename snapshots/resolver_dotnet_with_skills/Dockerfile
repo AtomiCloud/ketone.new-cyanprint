@@ -18,4 +18,5 @@ LABEL cyanprint.dev=true
 ENV ASPNETCORE_URLS=http://+:5553
 WORKDIR /app
 COPY --from=publish /app/publish .
+USER app
 ENTRYPOINT ["dotnet", "Resolver.dll"]
