@@ -1,1 +1,0 @@
-task: [lint] pre-commit run --all

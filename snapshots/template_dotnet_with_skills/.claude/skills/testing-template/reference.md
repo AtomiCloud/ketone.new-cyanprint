@@ -163,9 +163,6 @@ template-root/
 # Run all test cases
 cyanprint test template .
 
-# Run with verbose output
-cyanprint test template . --verbose
-
 # Update snapshots
 cyanprint test template . --update-snapshots
 ```

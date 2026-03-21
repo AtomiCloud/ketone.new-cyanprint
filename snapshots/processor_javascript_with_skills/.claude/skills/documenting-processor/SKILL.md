@@ -1,7 +1,6 @@
 ---
 name: documenting-processor
 description: Document this CyanPrint processor into README.MD. Use when the user asks to document the processor, write a README, explain processor configuration, or describe file transformations. Reads cyan.yaml and entry point code to extract config schema and file handling.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Documenting this Processor

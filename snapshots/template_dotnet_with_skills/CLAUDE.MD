@@ -17,15 +17,15 @@ This is a CyanPrint template project. CyanPrint templates generate project scaff
 │   ├── package.json          # Dependencies (@atomicloud/cyan-sdk)
 │   └── tsconfig.json         # TypeScript configuration
 ├── template/                  # Template artifact files (language-specific)
-│   ├── typescript/
-│   ├── javascript/
-│   ├── python/
-│   ├── dotnet/
-│   └── common/
+│   ├── {language}/           # Language-specific scaffolding
+│   └── common/               # Shared files
+├── .claude/skills/            # Claude Code skills
 ├── cyan.yaml                 # Template metadata and configuration
 ├── cyan/Dockerfile           # Template runtime container
 ├── cyan/blob.Dockerfile      # Blob storage container
-└── test.cyan.yaml            # Test configuration
+├── test.cyan.yaml            # Test configuration
+└── scripts/
+    └── publish.sh            # Build and push script
 ```
 
 ## Development Workflow
@@ -37,209 +37,42 @@ Modify files in `template/` directories to change what gets generated.
 ### 2. Test Locally
 
 ```bash
-# Run template tests
-cyanprint test template
-
-# Run specific test case
-cyanprint test template --case "test-name"
+cyanprint test template .
+cyanprint test template . --verbose
+cyanprint test template . --update-snapshots
 ```
 
 ### 3. Publish
 
-```bash
-# Build and push template to registry
-cyanprint push template --build
-```
-
-## SDK Types
-
-### Cyan
-
-Main configuration object returned by template:
-
-```typescript
-interface Cyan {
-  processors: Processor[];   // Processors to run
-  plugins: Plugin[];         // Plugins to validate/transform
-  resolvers?: Resolver[];    // Resolvers for conflicts
-}
-```
-
-### CyanGlob
-
-File group definition:
-
-```typescript
-interface CyanGlob {
-  root: string;        // Source directory
-  glob: string;        // Glob pattern (e.g., "**/*")
-  exclude: string[];   // Patterns to exclude
-  type: GlobType;      // Template | Copy
-}
-```
-
-### GlobType
-
-- `GlobType.Template` - Process with variable substitution
-- `GlobType.Copy` - Copy files as-is
-
-### IInquirer
-
-User prompting interface:
-
-```typescript
-interface IInquirer {
-  text(msg: string, id: string): Promise<string>;
-  select(msg: string, id: string, options: string[]): Promise<string>;
-  checkbox(msg: string, id: string, options: string[]): Promise<string[]>;
-  confirm(msg: string, id: string): Promise<boolean>;
-  password(msg: string, id: string): Promise<string>;
-  dateSelect(msg: string, id: string): Promise<string>;
-}
-```
-
-### IDeterminism
-
-Deterministic value provider for testing:
-
-```typescript
-interface IDeterminism {
-  get(key: string, origin: () => string): string;
-}
-```
-
-### Multi-Language Entry Points
-
-**Python:**
-```python
-from cyanprintsdk import start_template_with_fn, IInquirer, IDeterminism, Cyan, CyanProcessor, CyanGlob, GlobType
-
-def template_fn(i: IInquirer, d: IDeterminism) -> Cyan:
-    name = i.text("Project name", "name")
-    return Cyan(
-        processors=[
-            CyanProcessor(
-                name="cyan/default",
-                files=[CyanGlob(root="template/typescript", glob="**/*", exclude=[], type=GlobType.Template)],
-                config={"vars": {"name": name}},
-            )
-        ],
-        plugins=[],
-    )
-
-start_template_with_fn(template_fn)
-```
-
-**C#:**
-```csharp
-using sulfone_helium;
-
-Cyan TemplateFn(IInquirer i, IDeterminism d)
-{
-    var name = i.Text("Project name", "name");
-
-    return new Cyan
-    {
-        Processors = new[]
-        {
-            new CyanProcessor
-            {
-                Name = "cyan/default",
-                Files = new[]
-                {
-                    new CyanGlob
-                    {
-                        Root = "template/typescript",
-                        Glob = "**/*",
-                        Exclude = Array.Empty<string>(),
-                        Type = GlobType.Template,
-                    }
-                },
-                Config = new { vars = new { name } },
-            }
-        },
-        Plugins = Array.Empty<CyanPlugin>(),
-    };
-}
-
-CyanEngine.StartTemplate(TemplateFn);
-```
-
-## Build/Push
-
-### cyan.yaml Build Section
-
-```yaml
-build:
-  blob: ghcr.io/username/template-blob
-  template: ghcr.io/username/template-image
-```
-
-### Push Commands
+Authentication is required via `--token` flag or `CYAN_TOKEN` environment variable. The `--token` and `--message` flags must come before the artifact type subcommand.
 
 ```bash
-# Build and push
-cyanprint push template --build
+# Build and push (requires tag argument for --build)
+cyanprint push --token TOKEN --message "commit message" template --build v1.0.0
 
 # Push only (no build)
-cyanprint push template
+cyanprint push --token TOKEN --message "commit message" template
 ```
 
-## Testing
+## Skill Workflow
 
-### test.cyan.yaml Format
+When working on this template, follow this skill sequence:
 
-```yaml
-test_cases:
-  - name: "basic-test"
-    description: "Basic template test"
-    answer_state:
-      # Keys must match the id parameter from i.text(), i.select(), etc.
-      project-name: test-project
-      project-language: TypeScript
-      include-tests: "true"
-    deterministic_state:
-      # For d.get() keys with branching logic
-      add-more-options: "false"
-    validate:
-      - command: "test -f README.md"
-        description: "README exists"
-```
+1. **Writing skill** (`writing-template-{language}`) — implement template logic, entry point, prompts, and file generation
+2. **Testing skill** (`testing-template`) — write and run test cases in `test.cyan.yaml`
+3. **Documenting skill** (`documenting-template`) — update `CLAUDE.md` and documentation
 
-### Run Tests
-
-```bash
-cyanprint test template
-cyanprint test template --verbose
-cyanprint test template --update-snapshots
-```
-
-## Project Structure
-
-```
-{template-name}/
-├── cyan/                     # Template processor code
-│   ├── index.ts             # Entry point
-│   └── src/                 # Supporting modules
-├── template/                 # Generated output templates
-│   ├── {language}/          # Language-specific scaffolding
-│   └── common/              # Shared files
-├── .claude/
-│   └── skills/              # Claude Code skills (optional)
-├── cyan.yaml                # Metadata
-├── CLAUDE.md                # This file
-└── test.cyan.yaml           # Tests
-```
+Detailed SDK types, IInquirer question types, processor configuration, and IDeterminism usage are documented in the writing skill. Refer to it for implementation details.
 
 ## Variable Syntax
 
-Templates use double-brace syntax:
+Templates use double-brace syntax (injected by the meta-template's processor config):
 
 ```
 {{ variable_name }}
 ```
 
-With comment prefixes:
+With comment prefixes for code files:
 
 ```
 // {{ variable_name }}    # TypeScript/JavaScript/C#

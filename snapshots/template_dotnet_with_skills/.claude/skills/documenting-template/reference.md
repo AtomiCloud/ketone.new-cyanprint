@@ -25,10 +25,12 @@ cyanprint create {artifact-name}
 To use this template as a dependency in another CyanPrint template's `cyan.yaml`:
 
 ```yaml
-dependencies:
-  templates:
-    - name: { artifact-name }
-      version: '1.0.0'
+templates: [username/template-name]
+processors: [cyan/default]
+resolvers:
+  - resolver: username/resolver-name:1
+    config: {}
+    files: ['**/*.json']
 ```
 
 ## Prompts
@@ -46,52 +48,14 @@ When you run `cyanprint create`, the template will ask the following questions:
 | use_docker    | Include Docker configuration?      | confirm  |
 -->
 
-## Answer State Automation
-
-You can pre-answer all prompts in a `test.cyan.yaml` or answer state file:
-
-```yaml
-answer_state: { answer-state-example }
-```
-
-<!-- Example answer_state keyed to actual prompt IDs:
-answer_state:
-  name: my-project
-  language: Typescript
-  features:
-    - docker
-    - ci
-  use_docker: true
--->
-
-## Variables
-
-Templates use double-brace syntax for variable substitution:
-
-```
-{{variable_name}}
-```
-
-### Available Variables
-
-{variable-syntax}
-
-<!-- List the variables passed to the processor config `vars` map, e.g.:
-| Variable    | Description                  |
-| ----------- | ---------------------------- |
-| name        | Project name                 |
-| username    | CyanPrint username           |
-| description | Project description          |
--->
-
 ## Dependencies
 
-{dependencies}
+| Name   | Version   | Purpose   | Usage                  |
+| ------ | --------- | --------- | ---------------------- |
+| {name} | {version} | {purpose} | {how-used-in-template} |
 
-<!-- List processors and plugins used by this template:
-### Processors
-- `cyan/default` — Default variable substitution processor
-
-### Plugins
-- (none)
+<!-- Example:
+| Name | Version | Purpose | Usage |
+| ---- | ------- | ------- | ----- |
+| cyan/default | 1.0.0 | Variable substitution | Processes `{{var}}` in template files |
 -->

@@ -1,7 +1,6 @@
 ---
 name: writing-plugin-javascript
 description: Write or modify CyanPrint plugin code in JavaScript. Use when the user asks to add validation rules, change plugin behavior, modify the entry point, run commands from a plugin, or mutate files. Covers entry point (StartPluginWithLambda), native filesystem I/O (fs), and command execution (child_process). Plugins receive { directory, config } and use native OS operations.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Writing this Plugin (JavaScript)

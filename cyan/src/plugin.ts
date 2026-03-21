@@ -20,12 +20,19 @@ export async function PromptPlugin(
     }
   })();
 
+  const langSkillMap: Record<string, string[]> = {
+    Typescript: ['**/writing-plugin-javascript/**', '**/writing-plugin-python/**', '**/writing-plugin-dotnet/**'],
+    Javascript: ['**/writing-plugin-typescript/**', '**/writing-plugin-python/**', '**/writing-plugin-dotnet/**'],
+    Python: ['**/writing-plugin-typescript/**', '**/writing-plugin-javascript/**', '**/writing-plugin-dotnet/**'],
+    'C#': ['**/writing-plugin-typescript/**', '**/writing-plugin-javascript/**', '**/writing-plugin-python/**'],
+  };
+
   const skillsGlobs: CyanGlob[] =
     includeSkills === 'yes'
       ? [
           {
             root: 'plugin/skills',
-            exclude: [],
+            exclude: langSkillMap[langType] ?? [],
             glob: '**/*',
             type: GlobType.Copy,
           },

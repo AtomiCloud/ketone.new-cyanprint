@@ -149,9 +149,6 @@ plugin-root/
 # Run all tests
 cyanprint test plugin .
 
-# Run with verbose output
-cyanprint test plugin . --verbose
-
 # Update snapshots after verifying output is correct
 cyanprint test plugin . --update-snapshots
 ```

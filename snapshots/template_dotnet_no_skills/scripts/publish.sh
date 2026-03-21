@@ -3,4 +3,4 @@ set -eou pipefail
 [ "${CYAN_TOKEN:-}" = '' ] && echo "CYAN_TOKEN not set" && exit 1
 [ "${IMAGE_VERSION:-}" = '' ] && echo "IMAGE_VERSION not set" && exit 1
 COMMIT_MSG="$(git log -1 --pretty=%B | head -c 256)"
-cyanprint push template --build "${IMAGE_VERSION}" --token "${CYAN_TOKEN}" --message "${COMMIT_MSG}"
+cyanprint push --token "${CYAN_TOKEN}" --message "${COMMIT_MSG}" template --build "${IMAGE_VERSION}"

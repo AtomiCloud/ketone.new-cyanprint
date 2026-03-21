@@ -1,7 +1,6 @@
 ---
 name: documenting-template
 description: Document this CyanPrint template into README.MD. Use when the user asks to document the template, write a README, explain how to use the template, or add usage documentation. Reads cyan.yaml and entry point code to generate accurate, artifact-specific docs.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Documenting this Template
@@ -14,6 +13,26 @@ Read `cyan.yaml` to extract:
 - **description**: What the template generates
 - **tags**: Categories for discoverability
 - **build**: Image registry information
+
+### cyan.yaml Dependency Format with Version Pinning
+
+When referencing processors, plugins, resolvers, or templates in `cyan.yaml`, use version pinning for reproducibility:
+
+```yaml
+processors:
+  - name: cyan/default:1.0.0 # pinned version
+  - name: myorg/my-processor:1.2.3
+
+plugins:
+  - name: myorg/my-plugin:2.0.0
+
+resolvers:
+  - resolver: myorg/my-resolver:1.0.0
+    config: {}
+    files: ['**/*.json']
+```
+
+Omit the version (`:version`) to use the latest version, but advise users that pinning versions ensures reproducible builds.
 
 Read the entry point code (`cyan/index.ts` or equivalent for other languages) to extract:
 

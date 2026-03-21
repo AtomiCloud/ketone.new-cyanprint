@@ -1,7 +1,6 @@
 ---
 name: writing-template-typescript
 description: Write or modify CyanPrint template code in TypeScript. Use when the user asks to add prompts, change template logic, modify the entry point, add processors/plugins/resolvers, or change generated output for a TypeScript template. Covers IInquirer question types (text, select, checkbox, confirm, password, dateSelect), processor configuration, and IDeterminism.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Writing this Template (TypeScript)
@@ -155,15 +154,50 @@ Each template script is executed multiple times — during generation, testing, 
 
 `d.get()` solves this by generating a random value on first execution and storing it. Subsequent executions return the stored value instead of generating a new one. This is why ALL prompt values should go through `d.get()`, not just the obviously random ones.
 
+### When to Use d.get()
+
+**Always** wrap every `i.text()`, `i.select()`, `i.checkbox()`, `i.confirm()`, `i.password()`, and `i.dateSelect()` call with `d.get()`. Even prompts with fixed option lists produce non-deterministic ordering internally without it.
+
+**What breaks without it**: Snapshot tests fail because each run produces different `{{var}}` substitutions. The `cyanprint test --update-snapshots` command will appear to succeed, but subsequent test runs will fail on the now-stale snapshots.
+
+```typescript
+// WRONG — non-deterministic test output
+const name = await i.text('Project name', 'name');
+const lang = await i.select('Language', 'language', ['TypeScript', 'Python']);
+
+// CORRECT — deterministic across all runs
+const name = await d.get('project-name', () => i.text('Project name', 'name'));
+const lang = await d.get('language', () => i.select('Language', 'language', ['TypeScript', 'Python']));
+```
+
+### How d.get() Works
+
+1. **First execution** (interactive mode): Runs the fallback function, stores the result keyed by the first argument.
+2. **Test mode**: Reads directly from `deterministic_state` in `test.cyan.yaml`, ignoring the fallback function entirely.
+3. **Re-generation**: Returns the previously stored value, ensuring idempotent output.
+
 ## Configuring the Default Processor
 
 The default processor (`cyan/default`) supports these config options:
 
 - `vars`: Template variables for substitution. Supports nested objects. These are substituted using the configured syntax.
-- `flags`: Boolean flag variables. Supports nested objects. Useful for conditional template logic.
-- `parser.varSyntax`: Custom delimiter pairs. Default is `{{` and `}}`. Pass as array of 2-element arrays, e.g., `[['{{', '}}']]`.
+- `parser.varSyntax`: Custom delimiter pairs. Pass as array of 2-element arrays, e.g., `[['{{', '}}']]`. **Note**: The actual SDK default is `['__', '__']`. The meta-template typically injects `{{` `}}` via its own processor config (see the `PromptTemplate` function in this meta-template). When writing a new template, the varSyntax you set here must match the delimiters used in your template files.
 
 **Note**: Globbing is handled automatically by the processor via `fileHelper.resolveAll()`. You don't need to implement file matching yourself.
+
+### Inquirer and GlobType Processing
+
+The processor uses `GlobType` to determine how each file group is handled:
+
+- **GlobType.Template** (0): The processor reads files matching the glob pattern, substitutes `{{var}}` placeholders using `config.vars` and `parser.varSyntax`, then writes the result to the output directory.
+- **GlobType.Copy** (1): Files are copied as-is from the source to the output directory with no substitution.
+
+Inquirer prompt results become `config.vars` entries. The `id` parameter of each prompt becomes the variable name used in template files:
+
+```typescript
+const name = await d.get('project-name', () => i.text('Project name', 'name'));
+// → available as {{project-name}} in GlobType.Template files
+```
 
 ```typescript
 {
@@ -190,10 +224,6 @@ The default processor (`cyan/default`) supports these config options:
           name: projectName,
           description: projectDesc,
         },
-        flags: {
-          includeTests: true,
-          enableAuth: false,
-        },
         parser: {
           varSyntax: [['{{', '}}']],
         },
@@ -216,6 +246,38 @@ The default processor (`cyan/default`) supports these config options:
     },
   ],
 }
+```
+
+## Adding Resolvers
+
+```typescript
+{
+  processors: [...],
+  plugins: [...],
+  resolvers: [
+    {
+      resolver: 'username/resolver-name:1',
+      config: { /* resolver-specific config */ },
+      files: ['**/*.json'],
+    },
+  ],
+}
+```
+
+## cyan.yaml Artifact Declaration
+
+Every processor, plugin, and resolver referenced in the Cyan return object must also be declared in `cyan.yaml`. Version pinning is supported with `:version` syntax:
+
+```yaml
+processors: [cyan/default]
+plugins: [username/plugin:1]
+resolvers:
+  - resolver: username/resolver:1
+    config: {}
+    files: ['**/*.json']
+```
+
+The `processors` and `plugins` fields accept arrays of strings. The `resolvers` field accepts an array of objects because each resolver needs additional `config` and `files` configuration.
 ```
 
 ## Finding Processors, Plugins, and Resolvers
@@ -327,6 +389,8 @@ The `cyan/default` processor accepts this config shape:
 ```typescript
 {
   vars: Record<string, string>,    // Variables for {{var}} substitution
-  varSyntax?: [string, string][],  // Custom delimiters, default [["{{", "}}"]]
+  parser: {
+    varSyntax: [string, string][], // Custom delimiters, default [["__", "__"]], commonly overridden to [["{{", "}}"]]
+  },
 }
 ```

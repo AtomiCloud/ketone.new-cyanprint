@@ -54,18 +54,5 @@ Describe:
 Reference this processor in a template's `cyan.yaml`:
 
 ```yaml
-processors:
-  - name: { artifact-name }
-    config:
-      { config-key }: { example-value }
-```
-
-## Testing
-
-```bash
-# Run processor tests
-cyanprint test processor .
-
-# Update snapshots after changes
-cyanprint test processor . --update-snapshots
+processors: [username/processor-name:version]
 ```

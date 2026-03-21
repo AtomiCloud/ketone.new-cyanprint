@@ -1,7 +1,6 @@
 ---
 name: writing-plugin-python
 description: Write or modify CyanPrint plugin code in Python. Use when the user asks to add validation rules, change plugin behavior, modify the entry point, run commands from a plugin, or mutate files. Covers entry point (start_plugin_with_fn), native filesystem I/O (pathlib), and command execution (subprocess). Plugins receive { directory, config } and use native OS operations.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Writing this Plugin (Python)

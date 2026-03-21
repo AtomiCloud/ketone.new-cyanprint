@@ -97,9 +97,6 @@ globs:
 # Run all processor tests
 cyanprint test processor .
 
-# Run with verbose output
-cyanprint test processor . --verbose
-
 # Update snapshots after intentional changes
 cyanprint test processor . --update-snapshots
 ```

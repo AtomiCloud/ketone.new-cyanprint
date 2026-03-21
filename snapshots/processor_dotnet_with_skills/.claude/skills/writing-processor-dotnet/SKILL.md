@@ -1,7 +1,6 @@
 ---
 name: writing-processor-dotnet
 description: Write or modify CyanPrint processor code in C#. Use when the user asks to change file transformations, modify the entry point, handle file processing, or change output generation. Covers entry point (CyanEngine.StartProcessor), CyanFileHelper (ResolveAll/Read/Copy), and VirtualFile (Content/WriteFile). Processor function receives (ProcessorInput, CyanFileHelper) as two parameters.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Writing this Processor (C#)
@@ -39,11 +38,17 @@ The `fileHelper` parameter is the primary interface for working with files:
 
 ### ResolveAll() -- Start Here
 
-Call `fileHelper.ResolveAll()` first. It reads all Template globs and copies all Copy globs:
+Call `fileHelper.ResolveAll()` first. It automatically handles **all glob types**:
+
+- `GlobType.Template` (0) globs: reads files and returns them as `VirtualFile[]` for transformation
+- `GlobType.Copy` (1) globs: automatically copies files to the write directory
+
+**You do NOT need to manually check glob type or call `Copy()` yourself.** The processor author does NOT manually check glob type — `ResolveAll()` handles both cases:
 
 ```csharp
 var files = fileHelper.ResolveAll();
 // files -- IReadOnlyList<VirtualFile> available for transformation
+// Copy globs are already handled; Template globs are returned for processing
 ```
 
 ### Read(glob) -- Read Specific Files
@@ -51,18 +56,6 @@ var files = fileHelper.ResolveAll();
 ```csharp
 var files = fileHelper.Read(input.Globs[0]);
 // files -- IReadOnlyList<VirtualFile> matching a specific CyanGlob
-```
-
-### Copy(glob) -- Copy Files As-Is
-
-```csharp
-foreach (var glob in input.Globs)
-{
-    if (glob.Type == GlobType.Copy)
-    {
-        fileHelper.Copy(glob);
-    }
-}
 ```
 
 ### ReadDir / WriteDir -- Resolved Directory Paths
@@ -104,6 +97,23 @@ foreach (var file in files)
     if (file.Relative.EndsWith(".cs"))
     {
         file.Content = $"// Header\n{file.Content}";
+        file.WriteFile();
+    }
+}
+```
+
+### Example: Rename Files via `file.Relative` Mutation
+
+To change the output filename, mutate `file.Relative` before calling `WriteFile()`:
+
+```csharp
+var files = fileHelper.ResolveAll();
+foreach (var file in files)
+{
+    if (file.Relative.StartsWith("src/"))
+    {
+        // Rename: strip 'src/' prefix -> 'lib/'
+        file.Relative = "lib/" + file.Relative.Substring(4);
         file.WriteFile();
     }
 }

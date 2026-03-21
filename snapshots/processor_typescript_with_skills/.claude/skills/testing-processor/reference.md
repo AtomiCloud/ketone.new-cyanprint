@@ -123,9 +123,6 @@ processor-root/
 # Run all test cases
 cyanprint test processor .
 
-# Run with verbose output
-cyanprint test processor . --verbose
-
 # Update snapshots after verifying output is correct
 cyanprint test processor . --update-snapshots
 ```

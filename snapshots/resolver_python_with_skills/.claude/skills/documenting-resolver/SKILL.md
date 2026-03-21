@@ -1,7 +1,6 @@
 ---
 name: documenting-resolver
 description: Document this CyanPrint resolver into README.MD. Use when the user asks to document the resolver, write a README, explain conflict resolution strategy, or describe merge behavior. Reads cyan.yaml and entry point code to extract config schema and resolution logic.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Documenting this Resolver

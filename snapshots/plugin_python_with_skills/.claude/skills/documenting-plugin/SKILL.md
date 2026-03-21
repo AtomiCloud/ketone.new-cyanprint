@@ -1,7 +1,6 @@
 ---
 name: documenting-plugin
 description: Document this CyanPrint plugin into README.MD. Use when the user asks to document the plugin, write a README, explain plugin configuration, or describe what the plugin validates or transforms. Reads cyan.yaml and entry point code to extract config schema and behavior.
-allowed-tools: Read, Grep, Glob, Write
 ---
 
 # Documenting this Plugin

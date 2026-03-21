@@ -20,12 +20,19 @@ export async function PromptResolver(
     }
   })();
 
+  const langSkillMap: Record<string, string[]> = {
+    Typescript: ['**/writing-resolver-javascript/**', '**/writing-resolver-python/**', '**/writing-resolver-dotnet/**'],
+    Javascript: ['**/writing-resolver-typescript/**', '**/writing-resolver-python/**', '**/writing-resolver-dotnet/**'],
+    Python: ['**/writing-resolver-typescript/**', '**/writing-resolver-javascript/**', '**/writing-resolver-dotnet/**'],
+    'C#': ['**/writing-resolver-typescript/**', '**/writing-resolver-javascript/**', '**/writing-resolver-python/**'],
+  };
+
   const skillsGlobs: CyanGlob[] =
     includeSkills === 'yes'
       ? [
           {
             root: 'resolver/skills',
-            exclude: [],
+            exclude: langSkillMap[langType] ?? [],
             glob: '**/*',
             type: GlobType.Copy,
           },
