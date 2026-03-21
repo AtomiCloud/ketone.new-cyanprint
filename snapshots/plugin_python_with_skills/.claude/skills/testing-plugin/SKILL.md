@@ -17,7 +17,7 @@ Read the entry point code (`cyan/index.ts` or equivalent) to find:
 
 If the plugin needs input files to operate on, create an input directory:
 
-```
+```text
 inputs/
 └── with-readme/
     ├── README.md

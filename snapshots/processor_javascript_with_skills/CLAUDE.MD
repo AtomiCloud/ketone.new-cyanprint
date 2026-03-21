@@ -8,7 +8,7 @@ This is a CyanPrint processor project. Processors transform template files durin
 
 ## Key Files
 
-```
+```text
 ├── cyan/
 │   ├── index.ts              # Processor entry point - StartProcessorWithLambda
 │   ├── src/
