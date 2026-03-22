@@ -1,6 +1,6 @@
 ---
 name: writing-template-typescript
-description: Write or modify CyanPrint template code in TypeScript. Use when the user asks to add prompts, change template logic, modify the entry point, add processors/plugins/resolvers, or change generated output for a TypeScript template. Covers IInquirer question types (text, select, checkbox, confirm, password, dateSelect), processor configuration, and IDeterminism.
+description: Write or modify CyanPrint template code in TypeScript. Use when the user asks to add prompts, change template logic, modify the entry point, add processors/plugins/resolvers, or change generated output for a TypeScript template. Covers IInquirer question types (text, select, checkbox, confirm, password, dateSelect), processor configuration, and IDeterminism for non-deterministic values.
 ---
 
 # Writing this Template (TypeScript)
@@ -140,34 +140,39 @@ const date = await i.dateSelectQ({
 
 ## IDeterminism -- Deterministic Values
 
-Use `d.get()` for all prompt values to ensure deterministic test output:
+Use `d.get()` for values that are inherently non-deterministic (e.g., timestamps, random strings, UUIDs). User inputs from `i.text()`, `i.select()`, etc. do NOT need wrapping — the test harness provides deterministic answers via `answer_state`.
 
 ```typescript
-const name = await d.get('project-name', () => i.text('Project name?', 'project-name'));
-```
+// Only wrap non-deterministic values
+const branchName = d.get('branch-name', () => `feat-${Date.now()}`);
+const uniqueId = d.get('unique-id', () => crypto.randomUUID());
 
-In tests, `deterministic_state` provides values directly. In interactive mode, the fallback function runs.
+// User inputs are already deterministic — no d.get() needed
+const name = await i.text('Project name', 'name');
+const lang = await i.select('Language', 'language', ['TypeScript', 'Python']);
+```
 
 ### Why Determinism Matters
 
-Each template script is executed multiple times — during generation, testing, and re-generation. Without `d.get()`, values from `Date.now()`, `Math.random()`, or other non-deterministic sources produce different output each time, breaking snapshot tests.
+Each template script is executed multiple times — during generation, testing, and re-generation. Without `d.get()`, values from `Date.now()`, `Math.random()`, `crypto.randomUUID()`, or other non-deterministic sources produce different output each time, breaking snapshot tests.
 
-`d.get()` solves this by generating a random value on first execution and storing it. Subsequent executions return the stored value instead of generating a new one. This is why ALL prompt values should go through `d.get()`, not just the obviously random ones.
+`d.get()` solves this by generating a value on first execution and storing it. Subsequent executions return the stored value instead of generating a new one.
 
 ### When to Use d.get()
 
-**Always** wrap every `i.text()`, `i.select()`, `i.checkbox()`, `i.confirm()`, `i.password()`, and `i.dateSelect()` call with `d.get()`. Even prompts with fixed option lists produce non-deterministic ordering internally without it.
+Only wrap values that would naturally differ between runs:
 
-**What breaks without it**: Snapshot tests fail because each run produces different `{{var}}` substitutions. The `cyanprint test --update-snapshots` command will appear to succeed, but subsequent test runs will fail on the now-stale snapshots.
+- **Use `d.get()`**: `Date.now()`, `Math.random()`, `crypto.randomUUID()`, `new Date()`, or any other non-deterministic source
+- **Do NOT wrap**: `i.text()`, `i.select()`, `i.checkbox()`, `i.confirm()`, `i.password()`, `i.dateSelect()` — these are user inputs, and the test harness provides deterministic answers via `answer_state`
+
+**What breaks without it**: Snapshot tests fail because each run produces different output for non-deterministic values. The `cyanprint test --update-snapshots` command will appear to succeed, but subsequent test runs will fail on the now-stale snapshots.
 
 ```typescript
-// WRONG — non-deterministic test output
-const name = await i.text('Project name', 'name');
-const lang = await i.select('Language', 'language', ['TypeScript', 'Python']);
+// WRONG — non-deterministic across runs
+const branchName = `feat-${Date.now()}`;
 
-// CORRECT — deterministic across all runs
-const name = await d.get('project-name', () => i.text('Project name', 'name'));
-const lang = await d.get('language', () => i.select('Language', 'language', ['TypeScript', 'Python']));
+// CORRECT — stable across runs
+const branchName = d.get('branch-name', () => `feat-${Date.now()}`);
 ```
 
 ### How d.get() Works
@@ -181,7 +186,7 @@ const lang = await d.get('language', () => i.select('Language', 'language', ['Ty
 The default processor (`cyan/default`) supports these config options:
 
 - `vars`: Template variables for substitution. Supports nested objects. These are substituted using the configured syntax.
-- `parser.varSyntax`: Custom delimiter pairs. Pass as array of 2-element arrays, e.g., `[['{{', '}}']]`. **Note**: The actual SDK default is `['__', '__']`. The meta-template typically injects `{{` `}}` via its own processor config (see the `PromptTemplate` function in this meta-template). When writing a new template, the varSyntax you set here must match the delimiters used in your template files.
+- `parser.varSyntax`: Custom delimiter pairs. Pass as array of 2-element arrays, e.g., `[['{{', '}}']]`. **Note**: The actual SDK default is `['var__', '__']`. The meta-template typically injects `{{` `}}` via its own processor config (see the `PromptTemplate` function in this meta-template). When writing a new template, the varSyntax you set here must match the delimiters used in your template files.
 
 **Note**: Globbing is handled automatically by the processor via `fileHelper.resolveAll()`. You don't need to implement file matching yourself.
 
@@ -195,7 +200,7 @@ The processor uses `GlobType` to determine how each file group is handled:
 Inquirer prompt results become `config.vars` entries. The `id` parameter of each prompt becomes the variable name used in template files:
 
 ```typescript
-const name = await d.get('project-name', () => i.text('Project name', 'name'));
+const name = await i.text('Project name', 'name');
 // → available as {{project-name}} in GlobType.Template files
 ```
 
@@ -390,7 +395,7 @@ The `cyan/default` processor accepts this config shape:
 {
   vars: Record<string, string>,    // Variables for {{var}} substitution
   parser: {
-    varSyntax: [string, string][], // Custom delimiters, default [["__", "__"]], commonly overridden to [["{{", "}}"]]
+    varSyntax: [string, string][], // Custom delimiters, default [["var__", "__"]], commonly overridden to [["{{", "}}"]]
   },
 }
 ```

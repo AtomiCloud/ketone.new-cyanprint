@@ -1,6 +1,6 @@
 ---
 name: writing-template-dotnet
-description: Write or modify CyanPrint template code in C#. Use when the user asks to add prompts, change template logic, modify the entry point, add processors/plugins/resolvers, or change generated output for a C#/.NET template. Covers IInquirer question types (Text, Select, Checkbox, Confirm, Password, DateSelect), processor configuration, and IDeterminism.
+description: Write or modify CyanPrint template code in C#. Use when the user asks to add prompts, change template logic, modify the entry point, add processors/plugins/resolvers, or change generated output for a C#/.NET template. Covers IInquirer question types (Text, Select, Checkbox, Confirm, Password, DateSelect), processor configuration, and IDeterminism for non-deterministic values.
 ---
 
 # Writing this Template (C#)
@@ -154,34 +154,39 @@ var date = i.DateSelectQ(new DateSelectQOptions
 
 ## IDeterminism -- Deterministic Values
 
-Use `d.Get()` for all prompt values to ensure deterministic test output:
+Use `d.Get()` for values that are inherently non-deterministic (e.g., timestamps, random strings, GUIDs). User inputs from `i.Text()`, `i.Select()`, etc. do NOT need wrapping — the test harness provides deterministic answers via `answer_state`.
 
 ```csharp
-var name = d.Get("project-name", () => i.Text("Project name?", "project-name"));
-```
+// Only wrap non-deterministic values
+var branchName = d.Get("branch-name", () => $"feat-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
+var uniqueId = d.Get("unique-id", () => Guid.NewGuid().ToString());
 
-In tests, `deterministic_state` provides values directly. In interactive mode, the fallback function runs.
+// User inputs are already deterministic — no d.Get() needed
+var name = i.Text("Project name", "name");
+var lang = i.Select("Language", "language", new[] { "TypeScript", "Python" });
+```
 
 ### Why Determinism Matters
 
-Each template script is executed multiple times — during generation, testing, and re-generation. Without `d.Get()`, values from `DateTime.Now`, `Random`, or other non-deterministic sources produce different output each time, breaking snapshot tests.
+Each template script is executed multiple times — during generation, testing, and re-generation. Without `d.Get()`, values from `DateTime.Now`, `Random`, `Guid.NewGuid()`, or other non-deterministic sources produce different output each time, breaking snapshot tests.
 
-`d.Get()` solves this by generating a random value on first execution and storing it. Subsequent executions return the stored value instead of generating a new one. This is why ALL prompt values should go through `d.Get()`, not just the obviously random ones.
+`d.Get()` solves this by generating a value on first execution and storing it. Subsequent executions return the stored value instead of generating a new one.
 
 ### When to Use d.Get()
 
-**Always** wrap every `i.Text()`, `i.Select()`, `i.Checkbox()`, `i.Confirm()`, `i.Password()`, and `i.DateSelect()` call with `d.Get()`. Even prompts with fixed option lists produce non-deterministic ordering internally without it.
+Only wrap values that would naturally differ between runs:
 
-**What breaks without it**: Snapshot tests fail because each run produces different `{{var}}` substitutions. The `cyanprint test --update-snapshots` command will appear to succeed, but subsequent test runs will fail on the now-stale snapshots.
+- **Use `d.Get()`**: `DateTime.Now`, `DateTimeOffset.UtcNow`, `Random`, `Guid.NewGuid()`, or any other non-deterministic source
+- **Do NOT wrap**: `i.Text()`, `i.Select()`, `i.Checkbox()`, `i.Confirm()`, `i.Password()`, `i.DateSelect()` — these are user inputs, and the test harness provides deterministic answers via `answer_state`
+
+**What breaks without it**: Snapshot tests fail because each run produces different output for non-deterministic values. The `cyanprint test --update-snapshots` command will appear to succeed, but subsequent test runs will fail on the now-stale snapshots.
 
 ```csharp
-// WRONG — non-deterministic test output
-var name = i.Text("Project name", "name");
-var lang = i.Select("Language", "language", new[] { "TypeScript", "Python" });
+// WRONG — non-deterministic across runs
+var branchName = $"feat-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
 
-// CORRECT — deterministic across all runs
-var name = d.Get("project-name", () => i.Text("Project name", "name"));
-var lang = d.Get("language", () => i.Select("Language", "language", new[] { "TypeScript", "Python" }));
+// CORRECT — stable across runs
+var branchName = d.Get("branch-name", () => $"feat-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
 ```
 
 ### How d.Get() Works
@@ -195,7 +200,7 @@ var lang = d.Get("language", () => i.Select("Language", "language", new[] { "Typ
 The default processor (`cyan/default`) supports these config options:
 
 - `vars`: Template variables for substitution. Supports nested objects. These are substituted using the configured syntax.
-- `parser.varSyntax`: Custom delimiter pairs. Pass as array of 2-element arrays, e.g., `[['{{', '}}']]`. **Note**: The actual SDK default is `['__', '__']`. The meta-template typically injects `{{` `}}` via its own processor config (see the `PromptTemplate` function in this meta-template). When writing a new template, the varSyntax you set here must match the delimiters used in your template files.
+- `parser.varSyntax`: Custom delimiter pairs. Pass as array of 2-element arrays, e.g., `[['{{', '}}']]`. **Note**: The actual SDK default is `['var__', '__']`. The meta-template typically injects `{{` `}}` via its own processor config (see the `PromptTemplate` function in this meta-template). When writing a new template, the varSyntax you set here must match the delimiters used in your template files.
 
 **Note**: Globbing is handled automatically by the processor via `fileHelper.resolveAll()`. You don't need to implement file matching yourself.
 
@@ -209,7 +214,7 @@ The processor uses `GlobType` to determine how each file group is handled:
 Inquirer prompt results become `config.vars` entries. The `id` parameter of each prompt becomes the variable name used in template files:
 
 ```csharp
-var name = d.Get("project-name", () => i.Text("Project name", "name"));
+var name = i.Text("Project name", "name");
 // → available as {{project-name}} in GlobType.Template files
 ```
 
@@ -408,7 +413,7 @@ new
     vars = new Dictionary<string, string>(),     // Variables for {{var}} substitution
     parser = new
     {
-        varSyntax = new[] { new[] { "{{", "}}" } }, // Custom delimiters, default [["__", "__"]], commonly overridden to [["{{", "}}"]]
+        varSyntax = new[] { new[] { "{{", "}}" } }, // Custom delimiters, default [["var__", "__"]], commonly overridden to [["{{", "}}"]]
     },
 }
 ```

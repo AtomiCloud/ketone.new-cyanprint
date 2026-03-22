@@ -79,6 +79,28 @@ With comment prefixes for code files:
 # {{ variable_name }}     # Python/Shell
 ```
 
+## CyanPrint Artifact Types
+
+Templates can reference three other artifact types. Each serves a different purpose in the generation pipeline:
+
+### Processor
+
+Transforms files *during* template generation. Runs in a Docker container. Receives file content via `CyanFileHelper`, applies transformations (variable substitution, code generation, etc.), and returns output. The default processor (`cyan/default`) handles `{{var}}` substitution.
+
+**Use when**: You need to programmatically transform template files into generated output (e.g., custom code generation, AST manipulation, templating beyond simple variable substitution).
+
+### Plugin
+
+Validates or modifies the output *after* the template has fully generated. Runs natively on the filesystem (not in Docker). Receives a directory path and config.
+
+**Use when**: You need to lint generated code, format files, run `npm install`/`dotnet restore`, validate project structure, or make post-generation filesystem changes.
+
+### Resolver
+
+Merges conflicting files when multiple processors produce the same output file. Receives multiple versions of a file (each tagged with an origin/layer) and produces a single resolved output. Must ensure commutativity and associativity.
+
+**Use when**: Your template chains multiple processors that might produce overlapping files (e.g., two processors both generating `package.json` — the resolver decides how to merge them).
+
 ## Registry
 
 - Browse: https://cyanprint.dev/registry
