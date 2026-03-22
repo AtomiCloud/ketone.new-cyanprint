@@ -1,6 +1,6 @@
 username: cyan
 name: new
-description: CyanPrint Template to create CyanPrint Templates, Processors or Plugins
+description: CyanPrint Template to create CyanPrint Templates, Processors, Plugins or Resolvers
 project: https://github.com/AtomiCloud/ketone.new-cyanprint
 source: https://github.com/AtomiCloud/ketone.new-cyanprint
 email: ernest@atomi.cloud
@@ -8,6 +8,20 @@ tags:
   - default
   - cyanprint
 readme: README.MD
+build:
+  registry: ${DOMAIN:-docker.io}/${GITHUB_REPO_REF:-kirinnee}
+  platforms:
+    - linux/amd64
+    - linux/arm64
+  images:
+    template:
+      image: template-template
+      dockerfile: ./cyan/Dockerfile
+      context: ./cyan
+    blob:
+      image: template-blob
+      dockerfile: ./cyan/blob.Dockerfile
+      context: .
 templates: []
 processors:
   - cyan/default

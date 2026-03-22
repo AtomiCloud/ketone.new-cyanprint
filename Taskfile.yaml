@@ -1,9 +1,7 @@
 version: '3'
 
 tasks:
-  test:
-    cmds:
-      - ./scripts/test.sh
+  # test task removed - replaced by test.cyan.yaml-based testing (Plan 3)
   build:
     dotenv:
       - './.env'

@@ -1,50 +1,69 @@
-import { type Cyan, type CyanGlob, GlobType, type IInquirer } from "@atomicloud/cyan-sdk";
+import { type Cyan, type CyanGlob, GlobType, type IInquirer } from '@atomicloud/cyan-sdk';
 
 export async function PromptPlugin(
   inquirer: IInquirer,
   langType: string,
   vars: any,
+  includeSkills: string,
 ): Promise<Cyan> {
   const glob = (() => {
-    if (langType == "Typescript") {
+    if (langType == 'Typescript') {
       return TypescriptValues();
-    } else if (langType == "C#") {
+    } else if (langType == 'C#') {
       return CSharpValues();
-    } else if (langType == "Python") {
+    } else if (langType == 'Python') {
       return PythonValues();
-    } else if (langType == "Javascript") {
+    } else if (langType == 'Javascript') {
       return JavascriptValues();
     } else {
-      throw new Error("Invalid language type");
+      throw new Error('Invalid language type');
     }
   })();
+
+  const langSkillMap: Record<string, string[]> = {
+    Typescript: ['**/writing-plugin-javascript/**', '**/writing-plugin-python/**', '**/writing-plugin-dotnet/**'],
+    Javascript: ['**/writing-plugin-typescript/**', '**/writing-plugin-python/**', '**/writing-plugin-dotnet/**'],
+    Python: ['**/writing-plugin-typescript/**', '**/writing-plugin-javascript/**', '**/writing-plugin-dotnet/**'],
+    'C#': ['**/writing-plugin-typescript/**', '**/writing-plugin-javascript/**', '**/writing-plugin-python/**'],
+  };
+
+  const skillsGlobs: CyanGlob[] =
+    includeSkills === 'yes'
+      ? [
+          {
+            root: 'plugin/skills',
+            exclude: langSkillMap[langType] ?? [],
+            glob: '**/*',
+            type: GlobType.Copy,
+          },
+        ]
+      : [];
 
   return {
     processors: [
       {
-        name: "cyan/default",
+        name: 'cyan/default',
         files: [
           ...glob,
           {
-            root: "plugin/common",
+            root: 'plugin/common',
             exclude: [],
-            glob: "**/*",
+            glob: '**/*',
             type: GlobType.Copy,
           },
           {
-            root: "plugin",
+            root: 'plugin',
             exclude: [],
-            glob: "cyan.yaml",
+            glob: 'cyan.yaml',
             type: GlobType.Template,
           },
+          ...skillsGlobs,
         ],
         config: {
           vars,
           parser: {
-            varSyntax: [
-                ["{{", "}}"],
-            ]
-          }
+            varSyntax: [['{{', '}}']],
+          },
         },
       },
     ],
@@ -55,8 +74,8 @@ export async function PromptPlugin(
 function CSharpValues(): CyanGlob[] {
   return [
     {
-      root: "plugin/dotnet",
-      glob: "**/*",
+      root: 'plugin/dotnet',
+      glob: '**/*',
       type: GlobType.Template,
       exclude: [],
     },
@@ -66,8 +85,8 @@ function CSharpValues(): CyanGlob[] {
 function PythonValues(): CyanGlob[] {
   return [
     {
-      root: "plugin/python",
-      glob: "**/*",
+      root: 'plugin/python',
+      glob: '**/*',
       type: GlobType.Template,
       exclude: [],
     },
@@ -77,8 +96,8 @@ function PythonValues(): CyanGlob[] {
 function JavascriptValues(): CyanGlob[] {
   return [
     {
-      root: "plugin/javascript",
-      glob: "**/*",
+      root: 'plugin/javascript',
+      glob: '**/*',
       type: GlobType.Template,
       exclude: [],
     },
@@ -88,8 +107,8 @@ function JavascriptValues(): CyanGlob[] {
 function TypescriptValues(): CyanGlob[] {
   return [
     {
-      root: "plugin/typescript",
-      glob: "**/*",
+      root: 'plugin/typescript',
+      glob: '**/*',
       type: GlobType.Template,
       exclude: [],
     },

@@ -1,0 +1,1292 @@
+tests:
+  # ============================================
+  # TEMPLATE TESTS (8 test cases)
+  # ============================================
+  - name: template_typescript_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/template_typescript_no_skills
+    validate:
+      - cyanprint test template
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Template
+      cyan/new/language:
+        type: String
+        value: Typescript
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-template
+      cyan/new/description:
+        type: String
+        value: A test template
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: template_typescript_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/template_typescript_with_skills
+    validate:
+      - cyanprint test template .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Template
+      cyan/new/language:
+        type: String
+        value: Typescript
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-template
+      cyan/new/description:
+        type: String
+        value: A test template
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: template_javascript_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/template_javascript_no_skills
+    validate:
+      - cyanprint test template .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Template
+      cyan/new/language:
+        type: String
+        value: Javascript
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-template
+      cyan/new/description:
+        type: String
+        value: A test template
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: template_javascript_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/template_javascript_with_skills
+    validate:
+      - cyanprint test template .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Template
+      cyan/new/language:
+        type: String
+        value: Javascript
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-template
+      cyan/new/description:
+        type: String
+        value: A test template
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: template_python_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/template_python_no_skills
+    validate:
+      - cyanprint test template .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Template
+      cyan/new/language:
+        type: String
+        value: Python
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-template
+      cyan/new/description:
+        type: String
+        value: A test template
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: template_python_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/template_python_with_skills
+    validate:
+      - cyanprint test template .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Template
+      cyan/new/language:
+        type: String
+        value: Python
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-template
+      cyan/new/description:
+        type: String
+        value: A test template
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: template_dotnet_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/template_dotnet_no_skills
+    validate:
+      - cyanprint test template .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Template
+      cyan/new/language:
+        type: String
+        value: C#
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-template
+      cyan/new/description:
+        type: String
+        value: A test template
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: template_dotnet_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/template_dotnet_with_skills
+    validate:
+      - cyanprint test template .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Template
+      cyan/new/language:
+        type: String
+        value: C#
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-template
+      cyan/new/description:
+        type: String
+        value: A test template
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  # ============================================
+  # PLUGIN TESTS (8 test cases)
+  # ============================================
+  - name: plugin_typescript_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/plugin_typescript_no_skills
+    validate:
+      - cyanprint test plugin .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Plugin
+      cyan/new/language:
+        type: String
+        value: Typescript
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-plugin
+      cyan/new/description:
+        type: String
+        value: A test plugin
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: plugin_typescript_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/plugin_typescript_with_skills
+    validate:
+      - cyanprint test plugin .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Plugin
+      cyan/new/language:
+        type: String
+        value: Typescript
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-plugin
+      cyan/new/description:
+        type: String
+        value: A test plugin
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: plugin_javascript_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/plugin_javascript_no_skills
+    validate:
+      - cyanprint test plugin .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Plugin
+      cyan/new/language:
+        type: String
+        value: Javascript
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-plugin
+      cyan/new/description:
+        type: String
+        value: A test plugin
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: plugin_javascript_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/plugin_javascript_with_skills
+    validate:
+      - cyanprint test plugin .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Plugin
+      cyan/new/language:
+        type: String
+        value: Javascript
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-plugin
+      cyan/new/description:
+        type: String
+        value: A test plugin
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: plugin_python_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/plugin_python_no_skills
+    validate:
+      - cyanprint test plugin .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Plugin
+      cyan/new/language:
+        type: String
+        value: Python
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-plugin
+      cyan/new/description:
+        type: String
+        value: A test plugin
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: plugin_python_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/plugin_python_with_skills
+    validate:
+      - cyanprint test plugin .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Plugin
+      cyan/new/language:
+        type: String
+        value: Python
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-plugin
+      cyan/new/description:
+        type: String
+        value: A test plugin
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: plugin_dotnet_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/plugin_dotnet_no_skills
+    validate:
+      - cyanprint test plugin .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Plugin
+      cyan/new/language:
+        type: String
+        value: C#
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-plugin
+      cyan/new/description:
+        type: String
+        value: A test plugin
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: plugin_dotnet_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/plugin_dotnet_with_skills
+    validate:
+      - cyanprint test plugin .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Plugin
+      cyan/new/language:
+        type: String
+        value: C#
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-plugin
+      cyan/new/description:
+        type: String
+        value: A test plugin
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  # ============================================
+  # PROCESSOR TESTS (8 test cases)
+  # ============================================
+  - name: processor_typescript_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/processor_typescript_no_skills
+    validate:
+      - cyanprint test processor .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Processor
+      cyan/new/language:
+        type: String
+        value: Typescript
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-processor
+      cyan/new/description:
+        type: String
+        value: A test processor
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: processor_typescript_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/processor_typescript_with_skills
+    validate:
+      - cyanprint test processor .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Processor
+      cyan/new/language:
+        type: String
+        value: Typescript
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-processor
+      cyan/new/description:
+        type: String
+        value: A test processor
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: processor_javascript_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/processor_javascript_no_skills
+    validate:
+      - cyanprint test processor .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Processor
+      cyan/new/language:
+        type: String
+        value: Javascript
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-processor
+      cyan/new/description:
+        type: String
+        value: A test processor
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: processor_javascript_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/processor_javascript_with_skills
+    validate:
+      - cyanprint test processor .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Processor
+      cyan/new/language:
+        type: String
+        value: Javascript
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-processor
+      cyan/new/description:
+        type: String
+        value: A test processor
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: processor_python_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/processor_python_no_skills
+    validate:
+      - cyanprint test processor .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Processor
+      cyan/new/language:
+        type: String
+        value: Python
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-processor
+      cyan/new/description:
+        type: String
+        value: A test processor
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: processor_python_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/processor_python_with_skills
+    validate:
+      - cyanprint test processor .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Processor
+      cyan/new/language:
+        type: String
+        value: Python
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-processor
+      cyan/new/description:
+        type: String
+        value: A test processor
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: processor_dotnet_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/processor_dotnet_no_skills
+    validate:
+      - cyanprint test processor .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Processor
+      cyan/new/language:
+        type: String
+        value: C#
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-processor
+      cyan/new/description:
+        type: String
+        value: A test processor
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: processor_dotnet_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/processor_dotnet_with_skills
+    validate:
+      - cyanprint test processor .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Processor
+      cyan/new/language:
+        type: String
+        value: C#
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-processor
+      cyan/new/description:
+        type: String
+        value: A test processor
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  # ============================================
+  # RESOLVER TESTS (8 test cases)
+  # ============================================
+  - name: resolver_typescript_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/resolver_typescript_no_skills
+    validate:
+      - cyanprint test resolver .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Resolver
+      cyan/new/language:
+        type: String
+        value: Typescript
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-resolver
+      cyan/new/description:
+        type: String
+        value: A test resolver
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: resolver_typescript_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/resolver_typescript_with_skills
+    validate:
+      - cyanprint test resolver .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Resolver
+      cyan/new/language:
+        type: String
+        value: Typescript
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-resolver
+      cyan/new/description:
+        type: String
+        value: A test resolver
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: resolver_javascript_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/resolver_javascript_no_skills
+    validate:
+      - cyanprint test resolver .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Resolver
+      cyan/new/language:
+        type: String
+        value: Javascript
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-resolver
+      cyan/new/description:
+        type: String
+        value: A test resolver
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: resolver_javascript_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/resolver_javascript_with_skills
+    validate:
+      - cyanprint test resolver .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Resolver
+      cyan/new/language:
+        type: String
+        value: Javascript
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-resolver
+      cyan/new/description:
+        type: String
+        value: A test resolver
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: resolver_python_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/resolver_python_no_skills
+    validate:
+      - cyanprint test resolver .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Resolver
+      cyan/new/language:
+        type: String
+        value: Python
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-resolver
+      cyan/new/description:
+        type: String
+        value: A test resolver
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: resolver_python_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/resolver_python_with_skills
+    validate:
+      - cyanprint test resolver .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Resolver
+      cyan/new/language:
+        type: String
+        value: Python
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-resolver
+      cyan/new/description:
+        type: String
+        value: A test resolver
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: resolver_dotnet_no_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/resolver_dotnet_no_skills
+    validate:
+      - cyanprint test resolver .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Resolver
+      cyan/new/language:
+        type: String
+        value: C#
+      cyan/new/skills:
+        type: String
+        value: 'no'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-resolver
+      cyan/new/description:
+        type: String
+        value: A test resolver
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}
+
+  - name: resolver_dotnet_with_skills
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/resolver_dotnet_with_skills
+    validate:
+      - cyanprint test resolver .
+    answer_state:
+      cyan/new/create:
+        type: String
+        value: Resolver
+      cyan/new/language:
+        type: String
+        value: C#
+      cyan/new/skills:
+        type: String
+        value: 'yes'
+      cyan/new/username:
+        type: String
+        value: testuser
+      cyan/new/name:
+        type: String
+        value: test-resolver
+      cyan/new/description:
+        type: String
+        value: A test resolver
+      cyan/new/email:
+        type: String
+        value: test@example.com
+      cyan/new/more-tags/0:
+        type: String
+        value: 'no'
+      cyan/new/project:
+        type: String
+        value: 'https://github.com/test/test'
+      cyan/new/source:
+        type: String
+        value: 'https://github.com/test/test'
+    deterministic_state: {}

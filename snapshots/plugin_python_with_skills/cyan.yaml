@@ -1,0 +1,18 @@
+username: testuser
+name: test-plugin
+description: A test plugin
+project: https://github.com/test/test
+source: https://github.com/test/test
+email: test@example.com
+tags: []
+readme: README.MD
+build:
+  registry: ${DOMAIN:-docker.io}/${GITHUB_REPO_REF:-testuser}
+  platforms:
+    - linux/amd64
+    - linux/arm64
+  images:
+    plugin:
+      image: test-plugin
+      dockerfile: Dockerfile
+      context: .

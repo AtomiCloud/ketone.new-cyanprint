@@ -1,0 +1,8 @@
+tests:
+  - name: identity_processing
+    expected:
+      type: snapshot
+      value:
+        path: ./snapshots/identity_processing
+    input: ./inputs/identity
+    config: {}
