@@ -31,27 +31,31 @@ jobs:
           export GITHUB_REPO_REF
           nix develop .#ci -c cyanprint --version
           nix develop .#ci -c cyanprint test template .
-  #
   docker:
-    name: Build Docker - ${{ matrix.image_name }}
+    name: Docker Build
     needs: test
-    strategy:
-      matrix:
-        include:
-          - context: ./cyan
-            dockerfile: ./cyan/Dockerfile
-            image_name: template-template
-          - context: ./cyan
-            dockerfile: ./cyan/blob.Dockerfile
-            image_name: template-blob
-    uses: ./.github/workflows/⚡reusable-docker.yaml
-    secrets: inherit
-    with:
-      atomi_platform: ketone
-      atomi_service: new-cyanprint
-
-      context: ${{ matrix.context }}
-      dockerfile: ${{ matrix.dockerfile }}
-      image_name: ${{ matrix.image_name }}
-  #
-  #
+    runs-on:
+      - nscloud-ubuntu-22.04-amd64-4x8-with-cache
+      - nscloud-cache-size-50gb
+      - nscloud-cache-tag-ketone-new-cyanprint-nix-store-cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: AtomiCloud/actions.setup-nix@v2
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Docker Images
+        env:
+          DOMAIN: ghcr.io
+          GITHUB_REPO_REF: ${{ github.repository }}
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_USER: ${{ github.actor }}
+        run: |
+          GITHUB_REPO_REF="$(echo "${GITHUB_REPO_REF}" | tr '[:upper:]' '[:lower:]')"
+          export GITHUB_REPO_REF
+          IMAGE_VERSION="${GITHUB_SHA:0:6}-$(echo "${GITHUB_REF_NAME}" | sed 's/[^a-zA-Z0-9._-]//g' | sed 's/[._-]*$//')"
+          nix develop .#ci -c cyanprint build "${IMAGE_VERSION}"
