@@ -49,7 +49,6 @@ Replace the matrix-based Docker build approach with `cyanprint`'s native `--buil
 
 - Updating snapshot test expected outputs (if cyan.yaml output changes)
 - Modifying the `⚡reusable-docker.yaml` workflow (it remains for use by other repos following the old pattern)
-- Modifying the `⚡reusable-cyanprint.yaml` workflow structure
 - Updating the `template/common/.github/workflows/publish.yaml` or `template/common/scripts/publish.sh` (those already use the new method)
 
 ## Context
