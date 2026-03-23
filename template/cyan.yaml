@@ -22,6 +22,6 @@ build:
       dockerfile: cyan/Dockerfile
       context: ./cyan
     blob:
-      image: {{name }}-blob
+      image: '{{name }}-blob'
       dockerfile: cyan/blob.Dockerfile
       context: .
