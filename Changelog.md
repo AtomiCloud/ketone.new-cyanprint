@@ -17,32 +17,28 @@
 
 ## [1.3.0](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.2.2...v1.3.0) (2026-03-22)
 
-
 ### 📜 Documentation 📜
 
-* add spec v5 and implementation plans [CU-86ewy2jep] ([72bf60f](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/72bf60f4aad94160b3896782fd899447a1f320aa))
-
+- add spec v5 and implementation plans [CU-86ewy2jep] ([72bf60f](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/72bf60f4aad94160b3896782fd899447a1f320aa))
 
 ### ✨ Features ✨
 
-* add resolver support, build/push, automated testing, skills & SDK v2.1.0 [CU-86ewy2jep] ([04b41b6](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/04b41b6c99a9446827618b4eda0e5f249ac9d39f))
-* fix cyan generators, improve skills, fix CLAUDE.md/publish.sh [CU-86ewy2jep] ([77c29d4](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/77c29d43288dd12f73f1cf1caff18c8c11e14319))
-
+- add resolver support, build/push, automated testing, skills & SDK v2.1.0 [CU-86ewy2jep] ([04b41b6](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/04b41b6c99a9446827618b4eda0e5f249ac9d39f))
+- fix cyan generators, improve skills, fix CLAUDE.md/publish.sh [CU-86ewy2jep] ([77c29d4](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/77c29d43288dd12f73f1cf1caff18c8c11e14319))
 
 ### 🐛 Bug Fixes 🐛
 
-* chown /app before USER app in dotnet Dockerfiles [CU-86ewy2jep] ([db7d8ff](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/db7d8ffa36c279aa972f4c5febc8d01665c95793))
-* clarify IDeterminism usage, varSyntax default, and artifact types [CU-86ewy2jep] ([9cdd6c0](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/9cdd6c0870026683e05916fd548b7b1378a78be5))
-* regenerate snapshots after MD040 fence language fix [CU-86ewy2jep] ([009581f](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/009581f7c54c4e7f8216239e1bd39011d615854b))
-* remove phantom content and fix skill inaccuracies [CU-86ewy2jep] ([6b190dd](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/6b190dd3c2fb5a95ae5ee9f5440cee2ba47e617f))
-* remove UTF-8 BOM from dotnet Dockerfiles [CU-86ewy2jep] ([20b53a8](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/20b53a8d0e75491fb0657c8f20326a1229814d90))
-* revert USER app from processor Dockerfile [CU-86ewy2jep] ([a9cfde1](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/a9cfde110f70aeea1664538de7dd22c00dad1da2))
-* run dotnet containers as non-root user [CU-86ewy2jep] ([41a1a75](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/41a1a7587eff48c8f721bb10a0a89a654bc01f30))
-
+- chown /app before USER app in dotnet Dockerfiles [CU-86ewy2jep] ([db7d8ff](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/db7d8ffa36c279aa972f4c5febc8d01665c95793))
+- clarify IDeterminism usage, varSyntax default, and artifact types [CU-86ewy2jep] ([9cdd6c0](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/9cdd6c0870026683e05916fd548b7b1378a78be5))
+- regenerate snapshots after MD040 fence language fix [CU-86ewy2jep] ([009581f](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/009581f7c54c4e7f8216239e1bd39011d615854b))
+- remove phantom content and fix skill inaccuracies [CU-86ewy2jep] ([6b190dd](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/6b190dd3c2fb5a95ae5ee9f5440cee2ba47e617f))
+- remove UTF-8 BOM from dotnet Dockerfiles [CU-86ewy2jep] ([20b53a8](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/20b53a8d0e75491fb0657c8f20326a1229814d90))
+- revert USER app from processor Dockerfile [CU-86ewy2jep] ([a9cfde1](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/a9cfde110f70aeea1664538de7dd22c00dad1da2))
+- run dotnet containers as non-root user [CU-86ewy2jep] ([41a1a75](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/41a1a7587eff48c8f721bb10a0a89a654bc01f30))
 
 ### 🔼 Dependency Upstreams 🔼
 
-* cyanprint upgrades ([471b9f2](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/471b9f23c7dd09fefc9b81af72f27c74c2d421d1))
+- cyanprint upgrades ([471b9f2](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/471b9f23c7dd09fefc9b81af72f27c74c2d421d1))
 
 ## [1.2.2](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.2.1...v1.2.2) (2026-02-10)
 
