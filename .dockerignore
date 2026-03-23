@@ -8,7 +8,7 @@ flake.nix
 Taskfile.yaml
 README.MD
 
-# Dev/test artifacts
+### Dev/test artifacts
 snapshots/
 spec/
 .kagent/
