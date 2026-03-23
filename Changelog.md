@@ -1,3 +1,11 @@
+## [1.3.2](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.3.1...v1.3.2) (2026-03-23)
+
+
+### 🐛 Bug Fixes 🐛
+
+* correct .gitignore/.dockerignore formatting [CU-86ex0x2zd] ([a8e5313](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/a8e5313de4ef91398f0f8a58d59f389da82e2126))
+* correct .gitignore/.dockerignore formatting [CU-86ex0x2zd] ([#8](https://github.com/AtomiCloud/ketone.new-cyanprint/issues/8)) ([374451e](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/374451ee727c3e358df2ce644ac52d723a0ac68e))
+
 ## [1.3.1](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.3.0...v1.3.1) (2026-03-23)
 
 
