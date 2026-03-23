@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eou pipefail
+set -euo pipefail
 [ "${DOMAIN:-}" = '' ] && echo "DOMAIN not set" && exit 1
 [ "${GITHUB_REPO_REF:-}" = '' ] && echo "GITHUB_REPO_REF not set" && exit 1
 [ "${DOCKER_PASSWORD:-}" = '' ] && echo "DOCKER_PASSWORD not set" && exit 1
