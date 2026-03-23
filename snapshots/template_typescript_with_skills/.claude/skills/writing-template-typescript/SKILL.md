@@ -283,8 +283,7 @@ resolvers:
 ```
 
 The `processors` and `plugins` fields accept arrays of strings. The `resolvers` field accepts an array of objects because each resolver needs additional `config` and `files` configuration.
-
-````
+```
 
 ## Finding Processors, Plugins, and Resolvers
 
@@ -308,7 +307,7 @@ interface Cyan {
   processors: CyanProcessor[];
   plugins: CyanPlugin[];
 }
-````
+```
 
 ### CyanProcessor
 

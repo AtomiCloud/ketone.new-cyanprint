@@ -21,26 +21,10 @@ export async function PromptProcessor(
   })();
 
   const langSkillMap: Record<string, string[]> = {
-    Typescript: [
-      '**/writing-processor-javascript/**',
-      '**/writing-processor-python/**',
-      '**/writing-processor-dotnet/**',
-    ],
-    Javascript: [
-      '**/writing-processor-typescript/**',
-      '**/writing-processor-python/**',
-      '**/writing-processor-dotnet/**',
-    ],
-    Python: [
-      '**/writing-processor-typescript/**',
-      '**/writing-processor-javascript/**',
-      '**/writing-processor-dotnet/**',
-    ],
-    'C#': [
-      '**/writing-processor-typescript/**',
-      '**/writing-processor-javascript/**',
-      '**/writing-processor-python/**',
-    ],
+    Typescript: ['**/writing-processor-javascript/**', '**/writing-processor-python/**', '**/writing-processor-dotnet/**'],
+    Javascript: ['**/writing-processor-typescript/**', '**/writing-processor-python/**', '**/writing-processor-dotnet/**'],
+    Python: ['**/writing-processor-typescript/**', '**/writing-processor-javascript/**', '**/writing-processor-dotnet/**'],
+    'C#': ['**/writing-processor-typescript/**', '**/writing-processor-javascript/**', '**/writing-processor-python/**'],
   };
 
   const skillsGlobs: CyanGlob[] =
