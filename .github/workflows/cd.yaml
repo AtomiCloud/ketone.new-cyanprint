@@ -7,6 +7,10 @@ on:
 jobs:
   cyanprint:
     name: Build and Push
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
     uses: ./.github/workflows/⚡reusable-cyanprint.yaml
     secrets: inherit
     with:

@@ -13,7 +13,7 @@ The CD pipeline (`cd.yaml`) and CI pipeline (`ci.yaml`) use a matrix-based appro
 Replace the matrix-based Docker build approach with `cyanprint`'s native `--build` flag, which reads the `build` section from `cyan.yaml` directly. This makes `cyan.yaml` the single source of truth for image build configuration.
 
 - **CD**: Use `cyanprint push --build <version>` — builds all images and pushes to registry + CyanPrint in one command
-- **CI**: Use `cyanprint build <version>` — builds all images without pushing (validation only)
+- **CI**: Use `cyanprint build <version>` — builds all images using Docker buildx (multi-platform builds push to registry, so GHCR login is required)
 
 ## Acceptance Criteria
 
