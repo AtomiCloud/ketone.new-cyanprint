@@ -1,3 +1,20 @@
+## [1.3.1](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.3.0...v1.3.1) (2026-03-23)
+
+
+### 📜 Documentation 📜
+
+* add implementation plans for CU-86ex0j5k7 ([9060c88](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/9060c8843abedfcbc4bf5a3d187f8b6449944c09))
+* add task spec for CU-86ex0j5k7 ([afda3a8](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/afda3a8280baea00041cf38242a28ea430bac1d9))
+* fix qemu/buildx order in plan-1.md [CU-86ex0j5k7] ([fc2cd32](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/fc2cd32efe9924ef829ea59ab5c1ac5c1f200543))
+* remove contradictory out-of-scope item [CU-86ex0j5k7] ([b9d9cf4](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/b9d9cf419558c52271019e03319564ae1b21c4ce))
+
+
+### 🐛 Bug Fixes 🐛
+
+* add GHCR permissions and env var guards [CU-86ex0j5k7] ([ee0636b](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/ee0636b5fc09e7b1fff5c452a21ded73ad8535b5))
+* address CodeRabbit review feedback [CU-86ex0j5k7] ([47a4ce9](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/47a4ce94a7769d361b10f044dd95a1a47ccb533b))
+* migrate CI/CD Docker builds to cyanprint --build [CU-86ex0j5k7] ([2136c2f](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/2136c2f1b5ca54cb1fd4ca7d84e411aefa1b112f))
+
 ## [1.3.0](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.2.2...v1.3.0) (2026-03-22)
 
 
