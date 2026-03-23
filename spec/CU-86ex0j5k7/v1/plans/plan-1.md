@@ -18,8 +18,8 @@ The workflow triggers on tag push (`v*.*.*`) and passes the version to `cyanprin
 
 Add Docker setup steps before the cyanprint push step:
 
-- `docker/setup-buildx-action@v3`
 - `docker/setup-qemu-action@v3`
+- `docker/setup-buildx-action@v3`
 - `docker/login-action@v3` with `ghcr.io`
 
 Pass `DOCKER_PASSWORD` and `DOCKER_USER` as env vars so `cyanprint push --build` can authenticate with the registry.
