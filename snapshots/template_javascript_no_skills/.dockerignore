@@ -21,3 +21,6 @@ README.MD
 **/node_modules/
 **/env.
 
+
+.cyan_output/
+.cyan_backup*/

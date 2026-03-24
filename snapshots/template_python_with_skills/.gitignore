@@ -3,3 +3,5 @@
 .idea
 .direnv
 .pre-commit-config.yaml
+.cyan_output/
+.cyan_backup*/

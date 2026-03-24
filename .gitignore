@@ -4,3 +4,6 @@
 .direnv
 .pre-commit-config.yaml
 .kagent/
+
+.cyan_output/
+.cyan_backup*/
