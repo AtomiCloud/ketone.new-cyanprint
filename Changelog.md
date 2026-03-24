@@ -1,3 +1,11 @@
+## [1.3.3](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.3.2...v1.3.3) (2026-03-24)
+
+
+### 🐛 Bug Fixes 🐛
+
+* add .cyan_output/ and .cyan_backup*/ to gitignore files [CU-86ex0z8ug] ([656d949](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/656d949050e2d6fb3e8faf6b85b62b1df427a674))
+* add .cyan_output/ and .cyan_backup*/ to language-specific gitignore [CU-86ex0z8ug] ([63d40bc](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/63d40bc85ab8b5147f405cf5ffd2412092f9a866))
+
 ## [1.3.2](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.3.1...v1.3.2) (2026-03-23)
 
 
