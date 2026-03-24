@@ -1,3 +1,6 @@
 env
 .idea
 .vscode
+
+.cyan_output/
+.cyan_backup*/

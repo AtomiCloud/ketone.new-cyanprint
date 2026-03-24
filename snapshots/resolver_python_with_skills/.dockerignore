@@ -2,3 +2,6 @@ env
 venv
 .idea
 .vscode
+
+.cyan_output/
+.cyan_backup*/
