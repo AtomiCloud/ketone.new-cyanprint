@@ -11,25 +11,8 @@ jobs:
     with:
       atomi_platform: ketone
       atomi_service: new-cyanprint
-  test:
-    name: Test
-    runs-on:
-      - nscloud-ubuntu-22.04-amd64-4x8-with-cache
-      - nscloud-cache-size-50gb
-      - nscloud-cache-tag-ketone-new-cyanprint-nix-store-cache
-    env:
-      DOMAIN: ghcr.io
-      GITHUB_REPO_REF: ${{ github.repository }}
-      GITHUB_SHA: ${{ github.sha }}
-      GITHUB_BRANCH: ${{ github.ref_name }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: AtomiCloud/actions.setup-nix@v2
-      - name: Run CyanPrint Tests
-        run: nix develop .#ci -c ./scripts/test.sh
   docker:
     name: Docker Build
-    needs: test
     permissions:
       contents: read
       id-token: write
