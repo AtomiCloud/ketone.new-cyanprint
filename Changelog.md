@@ -1,3 +1,15 @@
+## [1.4.0](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.3.3...v1.4.0) (2026-03-25)
+
+
+### ✨ Features ✨
+
+* add test CI jobs with parallel execution and resolvers ([ee3d86f](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/ee3d86f5d4c0f2243a87342e9600df841924b295))
+
+
+### 🐛 Bug Fixes 🐛
+
+* reduce parallelism ([2806a04](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/2806a0471d88e0a0ea76990881d46c17e0e8985b))
+
 ## [1.3.3](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.3.2...v1.3.3) (2026-03-24)
 
 
