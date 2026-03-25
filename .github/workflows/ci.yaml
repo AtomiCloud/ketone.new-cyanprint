@@ -22,7 +22,7 @@ jobs:
       - nscloud-cache-size-50gb
       - nscloud-cache-tag-ketone-new-cyanprint-nix-store-cache
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: AtomiCloud/actions.setup-nix@v2
       - uses: rlespinasse/github-slug-action@v3.x
       - uses: docker/setup-qemu-action@v3
