@@ -26,11 +26,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: AtomiCloud/actions.setup-nix@v2
       - name: Run CyanPrint Tests
-        run: |
-          GITHUB_REPO_REF="$(echo "${GITHUB_REPO_REF}" | tr '[:upper:]' '[:lower:]')"
-          export GITHUB_REPO_REF
-          nix develop .#ci -c cyanprint --version
-          nix develop .#ci -c cyanprint test template .
+        run: nix develop .#ci -c ./scripts/test.sh
   docker:
     name: Docker Build
     needs: test

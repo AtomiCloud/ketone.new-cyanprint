@@ -26,3 +26,10 @@ templates: []
 processors:
   - cyan/default
 plugins: []
+resolvers:
+  - resolver: atomi/ignore
+    config: {}
+    files: ['.gitignore', '.dockerignore']
+  - resolver: atomi/md
+    config: {}
+    files: ['CLAUDE.MD', 'CLAUDE.md']
