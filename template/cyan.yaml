@@ -11,6 +11,8 @@ processors:
   - cyan/default
 plugins: []
 resolvers: []
+commands:
+  - 'chmod +x scripts/*.sh 2>/dev/null || true'
 build:
   registry: ${DOMAIN:-docker.io}/${GITHUB_REPO_REF:-{{username }}}
   platforms:

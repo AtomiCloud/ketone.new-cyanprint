@@ -26,6 +26,8 @@ templates: []
 processors:
   - cyan/default
 plugins: []
+commands:
+  - 'chmod +x scripts/*.sh 2>/dev/null || true'
 resolvers:
   - resolver: atomi/ignore
     config: {}

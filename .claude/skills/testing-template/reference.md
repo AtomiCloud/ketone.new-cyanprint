@@ -140,6 +140,19 @@ validate:
   - grep -q 'text' file.txt
 ```
 
+### cyan.yaml commands (auto-executed during tests)
+
+Commands declared in the template's `cyan.yaml` under `commands:` execute automatically after template output is unpacked, before `validate` commands:
+
+```yaml
+# cyan.yaml
+commands:
+  - 'chmod +x scripts/*.sh'
+  - 'npm install'
+```
+
+These run non-interactively. If a command fails, the test runner stops and reports the failure.
+
 ## Directory Layout
 
 ```

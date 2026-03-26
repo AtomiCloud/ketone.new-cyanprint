@@ -88,6 +88,19 @@ validate:
   - grep -q 'my-project' package.json
 ```
 
+### cyan.yaml commands
+
+Commands declared in the template's `cyan.yaml` under the `commands:` field are also executed automatically after template output is unpacked, giving the test runner parity with `cyanprint try` and `cyanprint create` flows. These run before `validate` commands. For example:
+
+```yaml
+# cyan.yaml
+commands:
+  - 'chmod +x scripts/*.sh'
+  - 'npm install'
+```
+
+These execute non-interactively during tests. If a command fails, the test runner stops execution and reports the failure.
+
 ## Step 3: Run and iterate
 
 ```bash

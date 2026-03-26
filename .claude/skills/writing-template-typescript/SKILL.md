@@ -283,6 +283,40 @@ resolvers:
 ```
 
 The `processors` and `plugins` fields accept arrays of strings. The `resolvers` field accepts an array of objects because each resolver needs additional `config` and `files` configuration.
+
+## cyan.yaml -- Post-Creation Commands
+
+Templates can declare shell commands that execute automatically after template composition completes (e.g., `chmod +x scripts/*.sh`, `npm install`, `git init`):
+
+```yaml
+commands:
+  - 'chmod +x scripts/*.sh'
+  - 'npm install'
+```
+
+Commands run sequentially in the output directory after all files are written. In interactive mode (`cyanprint try` / `cyanprint create`), the user is prompted to approve before execution. In test mode (`cyanprint test`), commands execute automatically without prompting. On failure, the user is asked whether to continue with remaining commands.
+
+## cyan.yaml -- Preset Answers for Sub-Templates
+
+When a template depends on other templates (via the `templates` field), you can pre-declare answers for those sub-templates so users are not re-prompted for values already known:
+
+```yaml
+# Simple reference (no presets)
+templates:
+  - atomi/workspace:1
+
+# Extended reference with preset answers
+templates:
+  - template: atomi/workspace:1
+    preset_answers:
+      platform: ketone
+      use_docker: true
+      features: [a, b, c]
+```
+
+Supported value types in `preset_answers`: strings, booleans, arrays of strings. Keys are fully qualified: `{dependency-username}/{dependency-name}/{question-id}`. User-provided answers take precedence over preset answers — presets fill gaps only.
+
+Template dependencies themselves must still be declared in `cyan.yaml`:
 ```
 
 ## Finding Processors, Plugins, and Resolvers
