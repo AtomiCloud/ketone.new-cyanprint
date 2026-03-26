@@ -1,3 +1,10 @@
+## [1.5.0](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.4.0...v1.5.0) (2026-03-26)
+
+
+### ✨ Features ✨
+
+* add commands and preset_answers cyan.yaml support ([8dc16ce](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/8dc16ce418697cd4b00f7d4fe4dd79c869b15d9b))
+
 ## [1.4.0](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.3.3...v1.4.0) (2026-03-25)
 
 
