@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.5.0...v1.5.1) (2026-04-06)
+
+
+### 🐛 Bug Fixes 🐛
+
+* remove parallelism from CI workflows and update snapshots ([0e4114e](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/0e4114ec5b4c7c78e77eb1ed3d8c9a2d63941932))
+
 ## [1.5.0](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.4.0...v1.5.0) (2026-03-26)
 
 
