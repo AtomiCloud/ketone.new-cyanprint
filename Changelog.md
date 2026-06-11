@@ -1,3 +1,11 @@
+## [1.5.2](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.5.1...v1.5.2) (2026-06-11)
+
+
+### 🐛 Bug Fixes 🐛
+
+* move template artifact README to root ([a06e4a7](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/a06e4a7ea0f0296a6af8058c555e69d909792097))
+* move template artifact README to root ([#13](https://github.com/AtomiCloud/ketone.new-cyanprint/issues/13)) ([38bcd0e](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/38bcd0ed296d91af9c08b8741a64f8122202afc4))
+
 ## [1.5.1](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.5.0...v1.5.1) (2026-04-06)
 
 
