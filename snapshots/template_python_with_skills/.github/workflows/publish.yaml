@@ -2,8 +2,6 @@ name: CI-CD
 
 on:
   push:
-    branches:
-      - 'main'
 
 env:
   DOCKER_DOMAIN: ghcr.io
@@ -22,9 +20,10 @@ jobs:
       - name: Install CyanPrint
         run: ./scripts/setup-ubuntu.sh
       - name: Run CyanPrint Tests
-        run: cyanprint test template .
+        run: cyanprint test template . --parallel 1
   publish:
     needs: test
+    if: github.ref == 'refs/heads/main'
     name: Publish
     runs-on: ubuntu-22.04
     steps:
