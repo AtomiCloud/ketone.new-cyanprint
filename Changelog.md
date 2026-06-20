@@ -1,3 +1,10 @@
+## [1.5.3](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.5.2...v1.5.3) (2026-06-20)
+
+
+### 🐛 Bug Fixes 🐛
+
+* make cyanprint apt install work on ubuntu 24.04 ([0a4bd4e](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/0a4bd4e533e0ac43916c4c208b0eef69404f2585))
+
 ## [1.5.2](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.5.1...v1.5.2) (2026-06-11)
 
 
