@@ -13,6 +13,8 @@ jobs:
       atomi_service: new-cyanprint
   test:
     name: Test
+    permissions:
+      contents: read
     runs-on:
       - nscloud-ubuntu-22.04-amd64-4x8-with-cache
       - nscloud-cache-size-50gb
