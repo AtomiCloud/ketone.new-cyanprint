@@ -56,15 +56,17 @@ Every generated project includes:
 <project>/
 ├── cyan.yaml              # Metadata and build configuration
 ├── Dockerfile             # Runtime container
+├── flake.nix              # Nix dev/CI environment (provides cyanprint)
+├── flake.lock             # Pinned nix inputs (nixos-26.05 + nix-registry/v3)
+├── .envrc                 # direnv: `use flake`
 ├── .dockerignore
 ├── .gitignore
 ├── README.MD
 ├── test.cyan.yaml         # Snapshot-based test configuration
 ├── scripts/
-│   ├── publish.sh         # cyanprint push --build --message
-│   └── setup-ubuntu.sh    # CI environment setup
+│   └── publish.sh         # cyanprint push --build --message
 ├── .github/workflows/
-│   └── publish.yaml       # CI/CD pipeline (triggered on push to main)
+│   └── publish.yaml       # nix-based CI/CD (nix develop .#ci -c cyanprint …)
 ├── <language files>       # index.ts, main.py, *.csproj, etc.
 └── .claude/               # (optional, when skills=yes)
     ├── CLAUDE.md
