@@ -1,3 +1,18 @@
+## [1.6.0](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.5.3...v1.6.0) (2026-06-27)
+
+
+### ✨ Features ✨
+
+* **new:** nixos-26.05 + nix-registry/v3, nix-based generated CI, ecosystem-upgrade skill (chain upgrade wave 1) ([#16](https://github.com/AtomiCloud/ketone.new-cyanprint/issues/16)) ([f0f14a3](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/f0f14a34ace13ef0cc779115b26046ec1c44816a))
+* **new:** upgrade to nixos-26.05 + nix-registry/v3, nix-based generated CI, ecosystem-upgrade skill ([dba1eca](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/dba1ecafdb83ce36385aef9e4dd07ee6300efeb7))
+
+
+### 🐛 Bug Fixes 🐛
+
+* **new:** address review feedback for generated CI ([790cc3e](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/790cc3e30ac6b6f55f4bdd0b40f0f51be664a7f7))
+* **new:** skip python-dotenv tests so poetry closure builds on nixos-26.05 ([f24a3fe](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/f24a3fe96389962171453cbf854e0e1eb6c2f5f0))
+* **new:** use cached poetry to avoid nixos-26.05 source test failures ([7c7c86f](https://github.com/AtomiCloud/ketone.new-cyanprint/commit/7c7c86f253e07a8b67d4d8ce5dc93e23443eec71))
+
 ## [1.5.3](https://github.com/AtomiCloud/ketone.new-cyanprint/compare/v1.5.2...v1.5.3) (2026-06-20)
 
 
