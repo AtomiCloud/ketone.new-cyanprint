@@ -37,20 +37,17 @@ let
 
           golangci-lint
           go
+
+          # poetry stays on its default (cached) interpreter. Overriding its
+          # python3 to python312 rebuilds poetry's entire closure from source,
+          # which then runs each dependency's test suite on the non-sandboxed
+          # CI runner where env-sensitive ones fail (python-dotenv reads
+          # $HOME/.env, dulwich reads the global git config). poetry-the-tool
+          # need not share the project's interpreter.
+          poetry
           ;
 
         python = python312;
-        # python-dotenv 1.2.2's test suite reads $HOME/.env, which fails the
-        # from-source build in the non-sandboxed CI runner (it finds
-        # /home/runner/.env and expects none). Skip its tests so poetry's
-        # closure builds on the 26.05 baseline.
-        poetry = (poetry.override {
-          python3 = python312.override {
-            packageOverrides = _final: prev: {
-              python-dotenv = prev.python-dotenv.overridePythonAttrs (_: { doCheck = false; });
-            };
-          };
-        });
 
         nodejs = nodejs_22;
         dotnet = dotnet-sdk_8;
