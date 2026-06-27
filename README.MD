@@ -98,9 +98,11 @@ build:
 The generated `.github/workflows/publish.yaml` provides a complete pipeline:
 
 - Triggers on push to `main`
-- Sets up Docker buildx and QEMU for multi-arch builds (linux/amd64, linux/arm64)
+- Sets up Nix via `AtomiCloud/actions.setup-nix@v2`
+- Runs snapshot tests with `nix develop .#ci -c cyanprint test <type> . --parallel 1`
+- Sets up Docker buildx and QEMU for multi-arch publishing
 - Authenticates with GitHub Container Registry (ghcr.io)
-- Installs CyanPrint and runs `scripts/publish.sh`
+- Runs `nix develop .#ci -c ./scripts/publish.sh`
 
 The publish script uses:
 

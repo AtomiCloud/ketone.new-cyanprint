@@ -48,7 +48,7 @@ The chain has a **cycle**, so there is no clean leaf-first order. Two axes point
    composition also **materializes into snapshot fixtures** (expect wide snapshot diffs when crossing
    that boundary).
 
-```
+```text
 Authoring (.cyan_state):   nix ← new   |   workspace ← new   |   new ← nix, workspace   (CYCLE)
 Composition (cyan.yaml):   workspace → atomi/nix   |   nix → none   |   new → none
 ```
@@ -115,7 +115,7 @@ A downstream repo must **wait for its upstream's release CD to publish** before 
 Updating before the upstream is published reads **stale coordinator state** and re-pins the old
 version. The order of the waves is therefore gated on _publication_, not merely on merge:
 
-```
+```text
 merge upstream PR  →  CI green  →  release CD runs  →  coordinator records new published version
                                                        └─► only now may the downstream `cyanprint update`
 ```

@@ -25,7 +25,6 @@ jobs:
     name: Publish
     permissions:
       contents: read
-      id-token: write
       packages: write
     runs-on:
       - nscloud-ubuntu-22.04-amd64-4x8-with-cache

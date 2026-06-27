@@ -1,5 +1,5 @@
 {
-  description = "CyanPrint Template";
+  description = "CyanPrint Processor";
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
 
